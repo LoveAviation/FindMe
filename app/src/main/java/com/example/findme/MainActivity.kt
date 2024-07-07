@@ -1,5 +1,6 @@
 package com.example.findme
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.graphics.PorterDuff.Mode;
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             chooseBotBar(1)
         }
         binding.createButton.setOnClickListener {
-            chooseBotBar(2)
+            startActivity(Intent(this, CreateFormActivity::class.java))
         }
         binding.accountButton.setOnClickListener {
             chooseBotBar(3)
@@ -46,13 +47,6 @@ class MainActivity : AppCompatActivity() {
                     createButton.colorFilter = null
                     accountButton.colorFilter = null
                     bot_bar_selected = 1
-                }
-
-                2 -> {
-                    searchButton.colorFilter = null
-                    createButton.setColorFilter(getColor(R.color.selected), Mode.SRC_ATOP)
-                    accountButton.colorFilter = null
-                    bot_bar_selected = 2
                 }
 
                 3 -> {
