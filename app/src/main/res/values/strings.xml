@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">FindMe</string>
+    <string name="search_button">Button to search forms</string>
+    <string name="create_button">Button to create a new form</string>
+    <string name="account_button">Button to open your account</string>
+    <string name="search_text">Search</string>
+    <string name="account_text">Account</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BottomNavStyle">
+        <item name="android:background">@drawable/bottom_nav_background</item>
+        <item name="android:elevation">8dp</item> <!-- Высота тени, которая создаст эффект сглаживания -->
+    </style>
+</resources>
