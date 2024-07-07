@@ -9,13 +9,13 @@ import com.example.findme.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
-    private var bot_bar_selected = 1
+    private var btnSelected = 1
     private val KEY = "bot_bar_selected"
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        bot_bar_selected = savedInstanceState.getInt(KEY)
-        chooseBotBar(bot_bar_selected)
+        btnSelected = savedInstanceState.getInt(KEY)
+        chooseBotBar(btnSelected)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(KEY, bot_bar_selected)
+        outState.putInt(KEY, btnSelected)
         super.onSaveInstanceState(outState)
     }
 
@@ -46,14 +46,14 @@ class MainActivity : AppCompatActivity() {
                     searchButton.setColorFilter(getColor(R.color.selected), Mode.SRC_ATOP)
                     createButton.colorFilter = null
                     accountButton.colorFilter = null
-                    bot_bar_selected = 1
+                    btnSelected = 1
                 }
 
                 3 -> {
                     binding.searchButton.colorFilter = null
                     binding.createButton.colorFilter = null
                     binding.accountButton.setColorFilter(getColor(R.color.selected), Mode.SRC_ATOP)
-                    bot_bar_selected = 3
+                    btnSelected = 3
                 }
             }
         }
