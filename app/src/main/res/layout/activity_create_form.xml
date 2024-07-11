@@ -11,30 +11,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <LinearLayout
-            android:id="@+id/title_layout"
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/crate_activity_title">
-            <ImageButton
-                android:id="@+id/back_title_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/back_button_resize"
-                android:background="@android:color/transparent"
-                android:paddingHorizontal="20dp"
-                android:layout_gravity="center_vertical"/>
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/create_activity_title"
-                android:textSize="35sp"
-                android:layout_gravity="center"
-                android:paddingVertical="20dp"
-                android:textStyle="bold"
-                android:textColor="@color/white" />
-        </LinearLayout>
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:title="@string/create_activity_title"
+            app:titleTextAppearance="@style/ToolBarStyle"
+            app:buttonGravity="center_vertical"
+            android:paddingVertical="5dp"
+            app:navigationIcon="@drawable/back_button_resize" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/title_textInpLayout"
@@ -49,7 +38,8 @@
                 android:id="@+id/title_editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/title_text" />
+                android:hint="@string/title_text"
+                android:maxLength="40"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/description_textInpLayout"
@@ -66,7 +56,8 @@
                 android:layout_height="match_parent"
                 android:gravity="top"
                 android:minHeight="200dp"
-                android:hint="@string/description_text"/>
+                android:hint="@string/description_text"
+                android:maxLength="300"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button

@@ -2,10 +2,21 @@
 <resources>
     <style name="BottomNavStyle">
         <item name="android:background">@drawable/bottom_nav_background</item>
-        <item name="android:elevation">8dp</item> <!-- Высота тени, которая создаст эффект сглаживания -->
+        <item name="android:elevation">8dp</item>
     </style>
     <style name="TextInputLayout">
         <item name="boxStrokeColor">@color/selected</item>
         <item name="boxStrokeWidth">2dp</item>
+    </style>
+    <style name="ToolBarStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="TextInputLayoutRoundedBox">
+        <item name="boxCornerRadiusBottomEnd">20dp</item> <!-- Закругление углов снизу и справа -->
+        <item name="boxCornerRadiusBottomStart">20dp</item>
+        <item name="boxCornerRadiusTopEnd">20dp</item> <!-- Закругление углов сверху и справа -->
+        <item name="boxCornerRadiusTopStart">20dp</item>
+        <item name="boxStrokeWidth">1dp</item> <!-- Ширина обводки -->
     </style>
 </resources>
