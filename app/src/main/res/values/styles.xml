@@ -4,4 +4,8 @@
         <item name="android:background">@drawable/bottom_nav_background</item>
         <item name="android:elevation">8dp</item> <!-- Высота тени, которая создаст эффект сглаживания -->
     </style>
+    <style name="TextInputLayout">
+        <item name="boxStrokeColor">@color/selected</item>
+        <item name="boxStrokeWidth">2dp</item>
+    </style>
 </resources>

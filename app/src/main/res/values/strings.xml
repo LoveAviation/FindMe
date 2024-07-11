@@ -11,4 +11,7 @@
     <string name="create_activity_title">Create a new form</string>
     <string name="description_text">Description</string>
     <string name="create_btn_text">Create</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_forms">Search forms</string>
 </resources>

@@ -7,38 +7,61 @@
     android:layout_height="match_parent"
     tools:context=".CreateFormActivity">
     <LinearLayout
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <TextView
+        <LinearLayout
+            android:id="@+id/title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/create_activity_title"
-            android:textSize="40sp"
-            android:paddingVertical="30dp"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:background="@drawable/crate_activity_title"/>
+            android:background="@drawable/crate_activity_title">
+            <ImageButton
+                android:id="@+id/back_title_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/back_button_resize"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="20dp"
+                android:layout_gravity="center_vertical"/>
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_activity_title"
+                android:textSize="35sp"
+                android:layout_gravity="center"
+                android:paddingVertical="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/white" />
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/title_textInpLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="40dp"
+            android:layout_marginHorizontal="13dp"
+            style="@style/TextInputLayout"
             android:layout_marginBottom="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/title_editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/title_text" />
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/description_textInpLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="200dp"
+            style="@style/TextInputLayout"
+            android:layout_marginHorizontal="13dp"
             android:layout_marginBottom="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/description_editText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="top"
@@ -47,6 +70,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
+            android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
