@@ -11,8 +11,14 @@
     <string name="create_activity_title">Create a new form</string>
     <string name="description_text">Description</string>
     <string name="create_btn_text">Create</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_forms">Search forms</string>
     <string name="sear_results_layout_description">Search results layout</string>
+    <string name="avatar_descr">Avatar of your account</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_surename">Surename</string>
+    <string name="my_forms_button">My forms</string>
+    <string name="exit_the_account_button">Exit the account</string>
+    <string name="create_your_account">Creat your account!</string>
+    <string name="sign_in">Sign in</string>
 </resources>
