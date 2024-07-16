@@ -1,11 +1,9 @@
 package com.example.findme
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PorterDuff.Mode
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -22,10 +20,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navHostFragment : NavHostFragment
     private lateinit var navController : NavController
 
+    private lateinit var accountBundle: Bundle
+    private var accountName: String? = null
+    private var accountSurname: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         sharPref = getSharedPreferences("MySharedPref", MODE_PRIVATE)
         myEdit = sharPref.edit()
         navHostFragment  = supportFragmentManager.findFragmentById(R.id.MainFragmentHost) as NavHostFragment
@@ -34,15 +37,19 @@ class MainActivity : AppCompatActivity() {
         btnSelected = sharPref.getInt(key, 1)
         chooseBotBar(btnSelected)
 
-        binding.searchButton.setOnClickListener {
-            chooseBotBar(1)
+        val searchClickListener = View.OnClickListener{ chooseBotBar(1) }
+        val accountClickListener = View.OnClickListener{
+            if(accountName == null && accountSurname == null) startActivity(Intent(this, RegistrationActivity::class.java))
+            else chooseBotBar(3)
         }
+
+        binding.searchButton.setOnClickListener(searchClickListener)
+        binding.searchText.setOnClickListener(searchClickListener)
         binding.createButton.setOnClickListener {
             startActivity(Intent(this, CreateFormActivity::class.java))
         }
-        binding.accountButton.setOnClickListener {
-            chooseBotBar(3)
-        }
+        binding.accountButton.setOnClickListener(accountClickListener)
+        binding.accountText.setOnClickListener(accountClickListener)
     }
 
     private fun chooseBotBar(a: Int) {

@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="@string/profile_surename"
+        android:text="@string/profile_surname"
         android:textSize="24sp"
         app:layout_constraintLeft_toRightOf="@+id/AvatarImage"
         app:layout_constraintTop_toBottomOf="@id/profileName" />

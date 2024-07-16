@@ -16,9 +16,15 @@
     <string name="sear_results_layout_description">Search results layout</string>
     <string name="avatar_descr">Avatar of your account</string>
     <string name="profile_name">Name</string>
-    <string name="profile_surename">Surename</string>
+    <string name="profile_surname">Surname</string>
     <string name="my_forms_button">My forms</string>
     <string name="exit_the_account_button">Exit the account</string>
-    <string name="create_your_account">Creat your account!</string>
-    <string name="sign_in">Sign in</string>
+    <string name="create_your_account">Create your account!</string>
+    <string name="sign_up">Sign up</string>
+    <string name="log_in">Log in</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="surname">Surname</string>
+    <string name="enter_your_surname">Enter your surname</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="create_account">Create account</string>
 </resources>
