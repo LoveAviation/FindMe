@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/profileName"
+        android:id="@+id/accountName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -28,14 +28,14 @@
         app:layout_constraintTop_toTopOf="@id/AvatarImage" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/accountSurname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:text="@string/profile_surname"
         android:textSize="24sp"
         app:layout_constraintLeft_toRightOf="@+id/AvatarImage"
-        app:layout_constraintTop_toBottomOf="@id/profileName" />
+        app:layout_constraintTop_toBottomOf="@id/accountName" />
 
     <Button
         android:id="@+id/my_forms"

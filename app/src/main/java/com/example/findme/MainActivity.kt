@@ -15,12 +15,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
     private var btnSelected = 1
     private val key = "bot_bar_selected"
+    private val key_name = "Name"
+    private val key_surname = "Surname"
     private lateinit var sharPref: SharedPreferences
     private lateinit var myEdit: SharedPreferences.Editor
     private lateinit var navHostFragment : NavHostFragment
     private lateinit var navController : NavController
 
-    private lateinit var accountBundle: Bundle
     private var accountName: String? = null
     private var accountSurname: String? = null
 
@@ -37,9 +38,16 @@ class MainActivity : AppCompatActivity() {
         btnSelected = sharPref.getInt(key, 1)
         chooseBotBar(btnSelected)
 
+        accountName = intent?.getStringExtra(key_name)
+        accountSurname = intent?.getStringExtra(key_surname)
+
+
+
         val searchClickListener = View.OnClickListener{ chooseBotBar(1) }
         val accountClickListener = View.OnClickListener{
-            if(accountName == null && accountSurname == null) startActivity(Intent(this, RegistrationActivity::class.java))
+            if(accountName == null && accountSurname == null){
+                startActivity(Intent(this, RegistrationActivity::class.java))
+            }
             else chooseBotBar(3)
         }
 
@@ -70,7 +78,11 @@ class MainActivity : AppCompatActivity() {
                     accountButton.setColorFilter(getColor(R.color.selected), Mode.SRC_ATOP)
                     accountButton.isEnabled = false
                     btnSelected = 3
-                    navController.navigate(R.id.action_search_to_accountFragment)
+                    val bundle = Bundle().apply {
+                        putString(key_name, accountName)
+                        putString(key_surname, accountSurname)
+                    }
+                    navController.navigate(R.id.action_search_to_accountFragment, bundle)
                 }
             }
         }

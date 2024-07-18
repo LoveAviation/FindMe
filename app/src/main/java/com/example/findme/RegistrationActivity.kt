@@ -1,9 +1,13 @@
 package com.example.findme
 
+import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.findme.databinding.ActivityCreateFormBinding
 import com.example.findme.databinding.ActivityRegistrationBinding
+import com.google.android.material.snackbar.Snackbar
 
 class RegistrationActivity : AppCompatActivity() {
     private lateinit var binding : ActivityRegistrationBinding
@@ -13,6 +17,17 @@ class RegistrationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.button.setOnClickListener {
+            if(inputIsValid()) {
+                startActivity(Intent(this, MainActivity::class.java).apply {
+                    putExtra("Name", binding.nameEditText.text.toString())
+                    putExtra("Surname", binding.surnameEditText.text.toString())
+                })
+                finish()
+            }
+            else Snackbar.make(binding.root, "Invalid name or surname", Snackbar.LENGTH_SHORT).show()
+        }
 
         binding.registrationToolbar.setNavigationOnClickListener{
             finish()
@@ -34,5 +49,12 @@ class RegistrationActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun inputIsValid(): Boolean{
+        val regex = Regex("[a-zA-Z]+(-[a-zA-Z]+)?")
+        val name = binding.nameEditText.text.toString().trim()
+        val surname = binding.surnameEditText.text.toString().trim()
+        return (name.length >= 2 && name.matches(regex)) && (surname.trim().length >= 2 && surname.matches(regex))
     }
 }
