@@ -1,16 +1,20 @@
-package com.example.findme
+package com.example.findme.presentation
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.findme.R
 import com.example.findme.databinding.FragmentAccountBinding
+import com.example.findme.domain.OnDataClearListener
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "Name"
-private const val ARG_PARAM2 = "Surname"
+private const val ARG_PARAM1 = MainActivity.KEY_NAME
+private const val ARG_PARAM2 = MainActivity.KEY_SURNAME
 
 /**
  * A simple [Fragment] subclass.
@@ -24,6 +28,17 @@ class AccountFragment : Fragment() {
 
     private lateinit var _binding : FragmentAccountBinding
     private val binding get() = _binding
+
+    private var dataClearListener: OnDataClearListener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            dataClearListener = activity as OnDataClearListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$activity must implement OnDataClearListener")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +60,25 @@ class AccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.accountName.text = param1
         binding.accountSurname.text = param2
+
+        binding.exitAccount.setOnClickListener {
+            showAlertDialog()
+        }
+    }
+
+    private fun showAlertDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(getString(R.string.warning))
+        builder.setMessage(getString(R.string.warning_message))
+        builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            dataClearListener?.clearUserData()
+            dialog.dismiss()
+        }
+        builder.setNegativeButton(getString(R.string.back)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
     companion object {

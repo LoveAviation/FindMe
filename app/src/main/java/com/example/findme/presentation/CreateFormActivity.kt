@@ -1,4 +1,4 @@
-package com.example.findme
+package com.example.findme.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

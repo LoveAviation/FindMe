@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".AccountFragment">
+    tools:context=".presentation.AccountFragment">
 
     <ImageView
         android:id="@+id/AvatarImage"
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="@string/profile_name"
+        android:text="@string/account_name"
         android:textSize="24sp"
         app:layout_constraintLeft_toRightOf="@+id/AvatarImage"
         app:layout_constraintTop_toTopOf="@id/AvatarImage" />
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="@string/profile_surname"
+        android:text="@string/account_surname"
         android:textSize="24sp"
         app:layout_constraintLeft_toRightOf="@+id/AvatarImage"
         app:layout_constraintTop_toBottomOf="@id/accountName" />

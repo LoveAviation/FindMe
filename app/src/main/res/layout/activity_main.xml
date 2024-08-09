@@ -5,12 +5,12 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".presentation.MainActivity">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,28 +20,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
-                <LinearLayout
+                <ImageButton
+                    android:id="@+id/search_button"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-                    <ImageButton
-                        android:id="@+id/search_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/search_button"
-                        app:srcCompat="@drawable/search_button"
-                        android:background="@android:color/transparent" />
-                    <TextView
-                        android:id="@+id/search_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/search_text"
-                        android:textAlignment="center"
-                        android:textSize="17sp"/>
-                </LinearLayout>
-
+                    android:padding="20dp"
+                    android:contentDescription="@string/search_button"
+                    app:srcCompat="@drawable/search_button"
+                    android:background="@android:color/transparent" />
                 <ImageButton
                     android:id="@+id/create_button"
                     android:layout_width="0dp"
@@ -51,28 +38,15 @@
                     android:scaleType="center"
                     app:srcCompat="@drawable/create_button"
                     android:background="@drawable/create_btn_style" />
-
-                <LinearLayout
+                <ImageButton
+                    android:id="@+id/account_button"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-                    <ImageButton
-                        android:id="@+id/account_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/account_button"
-                        app:srcCompat="@drawable/profile_button"
-                        android:background="@android:color/transparent" />
-                    <TextView
-                        android:id="@+id/account_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/account_text"
-                        android:textAlignment="center"
-                        android:textSize="17sp"/>
-                </LinearLayout>
+                    android:padding="20dp"
+                    android:contentDescription="@string/account_button"
+                    app:srcCompat="@drawable/profile_button"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
