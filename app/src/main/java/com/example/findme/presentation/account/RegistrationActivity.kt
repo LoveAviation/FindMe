@@ -1,4 +1,4 @@
-package com.example.findme.presentation
+package com.example.findme.presentation.account
 
 import android.app.Activity
 import android.content.Intent
@@ -16,15 +16,18 @@ import com.bumptech.glide.Glide
 import com.example.findme.R
 import com.example.findme.databinding.ActivityRegistrationBinding
 import com.example.findme.other.Account
-import com.example.findme.other.SignInState
+import com.example.findme.presentation.MainActivity
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlin.concurrent.thread
 
-class RegistrationActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class RegistrationActivity: AppCompatActivity() {
     private lateinit var binding : ActivityRegistrationBinding
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
     private var status = 1
-    private val viewModel : AccountVM by viewModels()
+        private val viewModel: AccountVM by viewModels()
     private var localURI: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,7 +133,7 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun waitForError(){
-        thread { //ЗАМЕНИТЬ НА КОРУТИНУ
+        thread {
             Thread.sleep(5000)
             Snackbar.make(binding.root, "Something went wrong", Snackbar.LENGTH_LONG).show()
         }

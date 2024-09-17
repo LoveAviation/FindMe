@@ -3,14 +3,14 @@ package com.example.findme.domain
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.findme.other.Account
-import com.example.findme.other.SignInState
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class DatabaseUC {
+class DatabaseUC @Inject constructor(){
 
     private val databaseReference: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference.child("Users") }
 

@@ -1,4 +1,4 @@
-package com.example.findme.presentation
+package com.example.findme.presentation.account
 
 
 import android.net.Uri
@@ -9,17 +9,15 @@ import androidx.lifecycle.ViewModel
 import com.example.findme.domain.DatabaseUC
 import com.example.findme.domain.StorageUC
 import com.example.findme.other.Account
-import com.example.findme.other.SignInState
-import com.google.android.gms.tasks.Task
-import com.google.firebase.Firebase
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.database
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 
-class AccountVM: ViewModel() {
-
-    private val databaseUC = DatabaseUC()
-    private val storageUC = StorageUC()
+@HiltViewModel
+class AccountVM @Inject constructor(
+    private val databaseUC : DatabaseUC,
+    private val storageUC : StorageUC
+): ViewModel() {
 
     private var _signInState = MutableLiveData<String?>()
     val signInState: LiveData<String?> get() = _signInState

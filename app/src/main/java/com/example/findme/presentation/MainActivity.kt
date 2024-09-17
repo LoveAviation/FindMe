@@ -16,9 +16,12 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.findme.R
 import com.example.findme.databinding.ActivityMainBinding
 import com.example.findme.domain.OnDataClearListener
+import com.example.findme.presentation.account.RegistrationActivity
+import com.example.findme.presentation.forms.CreateFormActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnDataClearListener, GestureDetector.OnGestureListener {
     private lateinit var binding : ActivityMainBinding
     private var btnSelected = 1

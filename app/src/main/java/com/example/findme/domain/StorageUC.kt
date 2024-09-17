@@ -5,8 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import javax.inject.Inject
 
-class StorageUC {
+class StorageUC @Inject constructor() {
     private val storageReference: StorageReference by lazy { FirebaseStorage.getInstance().reference.child("Avatars") }
 
     private val _storageState = MutableLiveData<String?>()

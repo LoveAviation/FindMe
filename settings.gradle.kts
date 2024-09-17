@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "FindMe"
 include(":app")
- 
+include(":account_fb")

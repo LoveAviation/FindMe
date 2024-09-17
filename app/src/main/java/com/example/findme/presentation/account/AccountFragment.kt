@@ -1,4 +1,4 @@
-package com.example.findme.presentation
+package com.example.findme.presentation.account
 
 import android.app.AlertDialog
 import android.content.Context
@@ -11,6 +11,9 @@ import com.bumptech.glide.Glide
 import com.example.findme.R
 import com.example.findme.databinding.FragmentAccountBinding
 import com.example.findme.domain.OnDataClearListener
+import com.example.findme.presentation.MainActivity
+import dagger.hilt.EntryPoint
+import dagger.hilt.android.AndroidEntryPoint
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -23,6 +26,7 @@ private const val ARG_PARAM3 = MainActivity.KEY_AVATAR
  * Use the [AccountFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 class AccountFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
