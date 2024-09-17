@@ -34,4 +34,6 @@
     <string name="back">Back</string>
     <string name="enter_your_login">Enter your login</string>
     <string name="enter_your_password">Enter your password</string>
+    <string name="click_to_choose_avatar">CLick to choose avatar</string>
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>

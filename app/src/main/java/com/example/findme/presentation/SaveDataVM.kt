@@ -7,11 +7,13 @@ class SaveDataVM: ViewModel() {
     var accPassword: String? = null
     var accName: String? = null
     var accSurname: String? = null
+    var accAvatar: String? = null
 
     fun clearAll(){
         accLogin = null
         accPassword = null
         accName = null
         accSurname = null
+        accAvatar = null
     }
 }
