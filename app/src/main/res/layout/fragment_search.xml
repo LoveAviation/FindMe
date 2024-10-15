@@ -8,9 +8,9 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        app:layout_constraintEnd_toStartOf="@id/filters_button"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="13dp"
@@ -23,20 +23,89 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:drawableStart="@android:drawable/ic_menu_search"
+            android:imeOptions="actionDone"
             android:inputType="text"
-            android:maxLines="1"
-            android:imeOptions="actionDone" />
+            android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ScrollView
-        android:contentDescription="@string/sear_results_layout_description"
+    <ImageButton
+        android:id="@+id/filters_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/filters_button"
+        android:src="@drawable/filters_button"
+        android:background="@android:color/transparent"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/search_layout"
+        app:layout_constraintBottom_toBottomOf="@id/search_layout"
+        android:layout_marginEnd="13dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/filters_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginHorizontal="13dp"
+        app:layout_constraintTop_toBottomOf="@id/search_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <Button
+            android:id="@+id/addTagButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toStartOf="@id/clearTagsButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/add_tag_to_find"/>
+
+        <Button
+            android:id="@+id/clearTagsButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            app:layout_constraintStart_toEndOf="@id/addTagButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/clear"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tagsRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/addTagButton" />
+
+        <Button
+            android:id="@+id/addLocationButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
+            android:text="@string/add_location_to_sort"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/locationFilterSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/addLocationButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/filter_by_location"
+            app:layout_constraintTop_toBottomOf="@id/tagsRV"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchResultView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="13dp"
-        android:layout_marginVertical="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_layout"/>
+        app:layout_constraintTop_toBottomOf="@+id/filters_layout"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,14 +1,17 @@
 package com.example.findme.presentation.account
 
 
+import android.content.ContentValues.TAG
 import android.net.Uri
+import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.findme.domain.DatabaseUC
-import com.example.findme.domain.StorageUC
-import com.example.findme.other.Account
+import com.example.account_fb.data.DatabaseUC
+import com.example.account_fb.data.StorageUC
+import com.example.account_fb.entity.Account
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -25,7 +28,7 @@ class AccountVM @Inject constructor(
     private var _logInState = MutableLiveData<Account?>(null)
     val logInState: LiveData<Account?> get() = _logInState
 
-    fun signIn(lifecycleOwner: LifecycleOwner, login: String, password: String, name: String, surname: String, urlAvatar: Uri?){ // КОГДА ИЗ ГАЛЕРЕИ ПРИДЕТ ФОТОГРАФИЯ, ТО СРАЗУ ПЕРЕДАСТ URi
+    fun signIn(lifecycleOwner: LifecycleOwner, login: String, password: String, name: String, surname: String, urlAvatar: Uri?){
         _signInState.value = null
         if(urlAvatar != null){
             storageUC.uploadAvatar(urlAvatar, login)
@@ -40,7 +43,7 @@ class AccountVM @Inject constructor(
                 }
             }
         }else{
-            databaseUC.signupUser(login, password, name, surname, null)
+            databaseUC.signupUser(login, password, name, surname)
             databaseUC.signupResult.observe(lifecycleOwner){ result ->
                 if(result != null){
                     _signInState.value = result
@@ -54,6 +57,33 @@ class AccountVM @Inject constructor(
         databaseUC.loginResult.observe(lifecycleOwner){ result ->
             if(result != null){
                 _logInState.value = result
+            }
+        }
+    }
+
+
+    private var _editState = MutableLiveData<String?>()
+    val editState: LiveData<String?> get() = _editState
+
+    fun edit(lifecycleOwner: LifecycleOwner, login: String, name: String, surname: String, password: String, avatar: String?){
+        if(avatar != null) {
+            storageUC.changeAvatar(avatar.toUri(), login)
+            storageUC.storageState.observe(lifecycleOwner){ avatarUrl ->
+                if(avatarUrl != null){
+                    editAccDB(lifecycleOwner, login, name, surname, password, avatarUrl)
+                }
+            }
+        }else{
+            editAccDB(lifecycleOwner, login, name, surname, password, avatar)
+        }
+    }
+
+    private fun editAccDB(lifecycleOwner: LifecycleOwner, login: String, name: String, surname: String, password: String, avatar: String?){
+        databaseUC.changeData(login, name, surname, password, avatar)
+        databaseUC.editResult.observe(lifecycleOwner){ result ->
+            when(result){
+                "SUCCESS" -> _editState.value = avatar
+                "ERROR" -> _editState.value = "ERROR"
             }
         }
     }

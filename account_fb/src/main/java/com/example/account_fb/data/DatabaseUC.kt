@@ -1,13 +1,14 @@
-package com.example.findme.domain
+package com.example.account_fb.data
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.findme.other.Account
+import com.example.account_fb.entity.Account
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class DatabaseUC @Inject constructor(){
@@ -41,7 +42,7 @@ class DatabaseUC @Inject constructor(){
     private val _signupResult = MutableLiveData<String?>()
     val signupResult: LiveData<String?> get() = _signupResult
 
-    fun signupUser(login: String, password: String, name: String, surname: String, urlAvatar: String?){
+    fun signupUser(login: String, password: String, name: String, surname: String, urlAvatar: String = ""){
         _signupResult.value = null
         val oldUser = databaseReference.child(login)
         oldUser.get().addOnCompleteListener { task: Task<DataSnapshot> ->
@@ -63,6 +64,28 @@ class DatabaseUC @Inject constructor(){
                 }
             }
         }
-
     }
+
+    private val _editResult = MutableLiveData<String?>()
+    val editResult: LiveData<String?> get() = _editResult
+
+    fun changeData(login: String, name: String, surname: String, password: String, avatar: String?){
+        _editResult.value = null
+        val userRef = databaseReference.child(login)
+        userRef.child("password").setValue(password).addOnSuccessListener{
+            userRef.child("name").setValue(name).addOnSuccessListener{
+                userRef.child("surname").setValue(surname).addOnSuccessListener{
+                    if(avatar != null) {
+                        userRef.child("urlAvatar").setValue(avatar).addOnSuccessListener {
+                            _editResult.value = "SUCCESS"
+                        }.addOnFailureListener { _editResult.value = "ERROR" }
+                    }else{
+                        _editResult.value = "SUCCESS"
+                    }
+                    Log.d(TAG, "${_editResult.value}")
+                }.addOnFailureListener{ _editResult.value = "ERROR" }
+            }.addOnFailureListener{ _editResult.value = "ERROR" }
+        }.addOnFailureListener{ _editResult.value = "ERROR" }
+    }
+
 }

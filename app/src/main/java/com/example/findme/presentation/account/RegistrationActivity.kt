@@ -1,11 +1,14 @@
 package com.example.findme.presentation.account
 
 import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -13,13 +16,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.example.account_fb.entity.Account
 import com.example.findme.R
 import com.example.findme.databinding.ActivityRegistrationBinding
-import com.example.findme.other.Account
 import com.example.findme.presentation.MainActivity
+import com.example.findme.presentation.MainActivity.Companion.KEY_AVATAR
+import com.example.findme.presentation.MainActivity.Companion.KEY_LOGIN
+import com.example.findme.presentation.MainActivity.Companion.KEY_NAME
+import com.example.findme.presentation.MainActivity.Companion.KEY_PASSWORD
+import com.example.findme.presentation.MainActivity.Companion.KEY_SURNAME
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import kotlin.concurrent.thread
 
 @AndroidEntryPoint
@@ -27,7 +39,7 @@ class RegistrationActivity: AppCompatActivity() {
     private lateinit var binding : ActivityRegistrationBinding
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
     private var status = 1
-        private val viewModel: AccountVM by viewModels()
+    private val viewModel: AccountVM by viewModels()
     private var localURI: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +48,7 @@ class RegistrationActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
                     localURI = uri
                     setImage(uri.toString())
@@ -47,10 +59,12 @@ class RegistrationActivity: AppCompatActivity() {
         checkPermissions()
 
         binding.button.setOnClickListener {
-            val login : String = binding.loginEditText.text.toString()
-            val password : String = binding.passwordEditText.text.toString()
-            val name : String = binding.nameEditText.text.toString()
-            val surname : String = binding.surnameEditText.text.toString()
+            val login : String = binding.loginEditText.text.toString().trim()
+            val password : String = binding.passwordEditText.text.toString().trim()
+            val name : String = binding.nameEditText.text.toString().trim()
+            val surname : String = binding.surnameEditText.text.toString().trim()
+
+            startLoading()
 
             if(status == 2){
                 viewModel.logIn(this, login, password)
@@ -66,8 +80,11 @@ class RegistrationActivity: AppCompatActivity() {
                     when(state){
                         "ENGAGED" -> Snackbar.make(binding.root, "This login is engaged", Snackbar.LENGTH_LONG).show()
                         null -> waitForError()
-                        else -> returnData(login, Account(password, name, surname, state))
+                        else -> {
+                            returnData(login, Account(password, name, surname, state))
+                        }
                     }
+                    Log.d(TAG, state.toString())
                 }
             }else{
                 Snackbar.make(binding.root, "Error", Snackbar.LENGTH_LONG).show()
@@ -122,22 +139,32 @@ class RegistrationActivity: AppCompatActivity() {
 
     private fun returnData(login: String, account: Account){
         startActivity(Intent(this, MainActivity::class.java).apply {
-            putExtra(MainActivity.KEY_LOGIN, login)
-            putExtra(MainActivity.KEY_PASSWORD, account.password)
-            putExtra(MainActivity.KEY_NAME, account.name)
-            putExtra(MainActivity.KEY_SURNAME, account.surname)
-            putExtra(MainActivity.KEY_AVATAR, account.urlAvatar)
+            putExtra(KEY_LOGIN, login)
+            putExtra(KEY_PASSWORD, account.password)
+            putExtra(KEY_NAME, account.name)
+            putExtra(KEY_SURNAME, account.surname)
+            putExtra(KEY_AVATAR, account.urlAvatar)
             flags =
                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
     }
 
     private fun waitForError(){
-        thread {
-            Thread.sleep(5000)
-            Snackbar.make(binding.root, "Something went wrong", Snackbar.LENGTH_LONG).show()
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).async {
+            Thread.sleep(5500)
+            withContext(Dispatchers.Main) {
+                Snackbar.make(binding.root, "Something went wrong", Snackbar.LENGTH_LONG).show()
+                binding.loadingBar.visibility = View.GONE
+                binding.button.isEnabled = true
+            }
         }
     }
+
+    private fun startLoading(){
+        binding.loadingBar.visibility = View.VISIBLE
+        binding.button.isEnabled = false
+    }
+
 
     private fun inputIsValid(): Boolean{
         val namesRegex = Regex("^\\p{L}+$")

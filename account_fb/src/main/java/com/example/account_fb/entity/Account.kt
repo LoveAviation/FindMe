@@ -1,4 +1,4 @@
-package com.example.findme.other
+package com.example.account_fb.entity
 
 /**
  * ЗДЕСЬ НЕТ ЛОГИНА,

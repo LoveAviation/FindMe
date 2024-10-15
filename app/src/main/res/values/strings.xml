@@ -36,4 +36,21 @@
     <string name="enter_your_password">Enter your password</string>
     <string name="click_to_choose_avatar">CLick to choose avatar</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="login">Login</string>
+    <string name="submit">Submit</string>
+    <string name="edit_account_button">Edit account button</string>
+    <string name="remember">LOGIN CAN NOT BE CHANGED. PLEASE, REMEMBER HIM.</string>
+    <string name="filters_button">Filters button</string>
+    <string name="add_tag_to_find">Add tag to find</string>
+    <string name="clear">Clear</string>
+    <string name="delete_this_tag">Delete this tag</string>
+    <string name="item_title">Item Title</string>
+    <string name="ok">OK</string>
+    <string name="add_tag">Add tag</string>
+    <string name="please_write_tag">Please, write tag:</string>
+    <string name="here_will_we_tags_to_filter">Here will be your tags to filter</string>
+    <string name="tap_to_see_your_location_need_to_be_enabled_gps">Tap to see your location. Need to be enabled gps</string>
+    <string name="add_location_to_sort">Add location to sort</string>
+    <string name="select">Select</string>
+    <string name="filter_by_location">Filter by location</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.findme.domain
+package com.example.findme.other
 
 interface OnDataClearListener {
     fun clearUserData()

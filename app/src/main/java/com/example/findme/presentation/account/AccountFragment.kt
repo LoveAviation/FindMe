@@ -1,7 +1,9 @@
 package com.example.findme.presentation.account
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,28 +12,17 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.findme.R
 import com.example.findme.databinding.FragmentAccountBinding
-import com.example.findme.domain.OnDataClearListener
+import com.example.findme.other.OnDataClearListener
 import com.example.findme.presentation.MainActivity
-import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = MainActivity.KEY_NAME
-private const val ARG_PARAM2 = MainActivity.KEY_SURNAME
-private const val ARG_PARAM3 = MainActivity.KEY_AVATAR
-
-/**
- * A simple [Fragment] subclass.
- * Use the [AccountFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 @AndroidEntryPoint
 class AccountFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    private var param3: String? = null
+    private var accLogin: String? = null
+    private var accPassword: String? = null
+    private var accName: String? = null
+    private var accSurname: String? = null
+    private var accAvatar: String? = null
 
     private lateinit var _binding : FragmentAccountBinding
     private val binding get() = _binding
@@ -40,19 +31,17 @@ class AccountFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        try {
             dataClearListener = activity as OnDataClearListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException("$activity must implement OnDataClearListener")
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-            param3 = it.getString(ARG_PARAM3)
+            accLogin = it.getString(MainActivity.KEY_LOGIN)
+            accPassword = it.getString(MainActivity.KEY_PASSWORD)
+            accName = it.getString(MainActivity.KEY_NAME)
+            accSurname = it.getString(MainActivity.KEY_SURNAME)
+            accAvatar = it.getString(MainActivity.KEY_AVATAR)
         }
     }
 
@@ -64,17 +53,31 @@ class AccountFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.accountName.text = param1
-        binding.accountSurname.text = param2
-        Glide.with(this)
-            .load(param3)
-            .circleCrop()
-            .into(binding.AvatarImage)
+        binding.accountName.text = "$accSurname $accName"
+        binding.accountLogin.text = accLogin
+
+        if (accAvatar != "" && accAvatar != "null"){ // НАДО ИСПРАВИТЬ "null"
+            Glide.with(this)
+                .load(accAvatar)
+                .circleCrop()
+                .into(binding.AvatarImage)
+        }
 
         binding.exitAccount.setOnClickListener {
             showAlertDialog()
+        }
+
+        binding.editButton.setOnClickListener{
+            startActivity(Intent(requireContext(), EditAccount::class.java).apply {
+                putExtra(MainActivity.KEY_LOGIN, accLogin)
+                putExtra(MainActivity.KEY_PASSWORD, accPassword)
+                putExtra(MainActivity.KEY_NAME, accName)
+                putExtra(MainActivity.KEY_SURNAME, accSurname)
+                putExtra(MainActivity.KEY_AVATAR, accAvatar)
+            })
         }
     }
 
@@ -93,23 +96,4 @@ class AccountFragment : Fragment() {
         alertDialog.show()
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AccountFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

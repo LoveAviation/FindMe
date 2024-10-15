@@ -1,4 +1,4 @@
-package com.example.findme.domain
+package com.example.account_fb.data
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
@@ -21,5 +21,12 @@ class StorageUC @Inject constructor() {
                 _storageState.value = url.toString()
             }
         }
+    }
+
+    fun changeAvatar(imageUri: Uri, login: String){
+        _storageState.value = null
+        val oldImageRef = storageReference.child("${login}_avatar")
+        oldImageRef.delete()
+        uploadAvatar(imageUri, login)
     }
 }
