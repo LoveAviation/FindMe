@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.account_fb.entity.Account
+import com.example.account_fb.other.ErrorStates
 import com.example.findme.R
 import com.example.findme.databinding.ActivityRegistrationBinding
 import com.example.findme.presentation.MainActivity
@@ -64,17 +65,21 @@ class RegistrationActivity: AppCompatActivity() {
             val name : String = binding.nameEditText.text.toString().trim()
             val surname : String = binding.surnameEditText.text.toString().trim()
 
-            startLoading()
-
             if(status == 2){
-                viewModel.logIn(this, login, password)
-                viewModel.logInState.observe(this){ account ->
-                    waitForError()
-                    if(account != null){
-                        returnData(login, account)
+                if( binding.passwordEditText.text!!.isNotEmpty() || binding.loginEditText.text!!.isNotEmpty()){
+                    startLoading()
+                    viewModel.logIn(this, login, password)
+                    viewModel.logInState.observe(this){ account ->
+                        waitForError()
+                        if(account != null){
+                            returnData(login, account)
+                        }
                     }
+                }else{
+                    Snackbar.make(binding.root, "Please, enter your login and password", Snackbar.LENGTH_LONG).show()
                 }
             }else if(status == 1 && inputIsValid()){
+                startLoading()
                 viewModel.signIn(this, login, password, name, surname, localURI)
                 viewModel.signInState.observe(this){ state ->
                     when(state){
@@ -86,8 +91,6 @@ class RegistrationActivity: AppCompatActivity() {
                     }
                     Log.d(TAG, state.toString())
                 }
-            }else{
-                Snackbar.make(binding.root, "Error", Snackbar.LENGTH_LONG).show()
             }
         }
 
@@ -150,12 +153,25 @@ class RegistrationActivity: AppCompatActivity() {
     }
 
     private fun waitForError(){
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).async {
-            Thread.sleep(5500)
-            withContext(Dispatchers.Main) {
-                Snackbar.make(binding.root, "Something went wrong", Snackbar.LENGTH_LONG).show()
-                binding.loadingBar.visibility = View.GONE
-                binding.button.isEnabled = true
+//        CoroutineScope(SupervisorJob() + Dispatchers.IO).async {
+//            Thread.sleep(5500)
+//            withContext(Dispatchers.Main) {
+//                Snackbar.make(binding.root, "Something went wrong", Snackbar.LENGTH_LONG).show()
+//                binding.loadingBar.visibility = View.GONE
+//                binding.button.isEnabled = true
+//            }
+//        }
+        viewModel.error.observe(this){ e ->
+            when(e){
+                ErrorStates.WRONG_PASSWORD -> {
+                    Snackbar.make(binding.root, "Wrong password", Snackbar.LENGTH_LONG).show()
+                    stopLoading()
+                }
+                ErrorStates.ERROR -> {
+                    Snackbar.make(binding.root, "Something went wrong", Snackbar.LENGTH_LONG).show()
+                    stopLoading()
+                }
+                ErrorStates.NULL -> Log.d(TAG, "Everything OK.")
             }
         }
     }
@@ -165,11 +181,19 @@ class RegistrationActivity: AppCompatActivity() {
         binding.button.isEnabled = false
     }
 
+    private fun stopLoading(){
+        binding.loadingBar.visibility = View.GONE
+        binding.button.isEnabled = true
+    }
 
     private fun inputIsValid(): Boolean{
         val namesRegex = Regex("^\\p{L}+$")
         val name = binding.nameEditText.text.toString().trim()
         val surname = binding.surnameEditText.text.toString().trim()
+
+        if ((name.length >= 2 && name.matches(namesRegex)) && (surname.trim().length >= 2 && surname.matches(namesRegex))){
+            Snackbar.make(binding.root, "Invalid input", Snackbar.LENGTH_LONG).show()
+        }
         return (name.length >= 2 && name.matches(namesRegex)) && (surname.trim().length >= 2 && surname.matches(namesRegex))
     }
 

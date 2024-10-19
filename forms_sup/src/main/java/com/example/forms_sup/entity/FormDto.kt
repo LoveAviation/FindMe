@@ -1,8 +1,10 @@
 package com.example.forms_sup.entity
 
+import android.annotation.SuppressLint
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@SuppressLint("UnsafeOptInUsageError")
 @Serializable
 data class FormDto(
     @SerialName("title")
@@ -12,5 +14,9 @@ data class FormDto(
     @SerialName("tags")
     val tags: List<String>,
     @SerialName("location")
-    val location: String?
+    val location: String?,
+    @SerialName("author")
+    val author: String? = "",//ЭТО БУДЕТ ЛОГИН
+    @SerialName("author_avatar")
+    val author_avatar: String? = ""//ЭТО БУДЕТ ЛОГИН
 )

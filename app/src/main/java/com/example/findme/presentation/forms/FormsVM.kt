@@ -37,7 +37,7 @@ class FormsVM @Inject constructor(
         }
     }
 
-    fun getByCoordinates(wordsToFind: String, tags: List<String>, longitude: String, latitude: String, radius: String){
+    fun getWithCoordinates(wordsToFind: String, tags: List<String>, longitude: String, latitude: String, radius: String){
         viewModelScope.launch{
             val formsByText = async {formsRep.getByText(wordsToFind, tags)}.await()
             val formsByCoordinates = async {formsRep.getByCoordinates(longitude, latitude, radius)}.await()
@@ -46,9 +46,9 @@ class FormsVM @Inject constructor(
         }
     }
 
-    fun getCoords(longitude: String, latitude: String, radius: String){
-        viewModelScope.launch{
-            _forms.value = formsRep.getByCoordinates(longitude, latitude, radius)
-        }
-    }
+//    fun getCoords(longitude: String, latitude: String, radius: String){
+//        viewModelScope.launch{
+//            _forms.value = formsRep.getByCoordinates(longitude, latitude, radius)
+//        }
+//    }
 }

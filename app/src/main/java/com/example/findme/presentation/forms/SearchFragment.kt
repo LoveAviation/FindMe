@@ -1,21 +1,15 @@
 package com.example.findme.presentation.forms
 
-import android.animation.ValueAnimator
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.view.animation.AnimationUtils
 import android.widget.EditText
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.animation.doOnEnd
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.findme.R
@@ -24,6 +18,11 @@ import com.example.findme.presentation.forms.adapter.FormsAdapter
 import com.example.findme.presentation.forms.adapter.TagsAdapter
 import com.example.findme.presentation.locationMap.MapActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -62,12 +61,15 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
         viewModel.getAllForms()
 
         viewModel.forms.observe(viewLifecycleOwner){ result ->
+            binding.loadingBar.visibility = View.GONE
+            if(result.isEmpty()){
+               binding.nothingText.visibility = View.VISIBLE
+            }
             binding.searchResultView.adapter = FormsAdapter(result)
         }
 
-        binding.searchEditText.doAfterTextChanged {
-            //viewModel.getByText(binding.searchEditText.text.toString(), tagList)
-            viewModel.getByCoordinates(binding.searchEditText.text.toString(), tagList, "2.3522", "48.8566", "5")
+        binding.searchEditText.afterChangeWithDebounce { string ->
+            search(string)
         }
 
         binding.filtersButton.setOnClickListener{
@@ -85,22 +87,38 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
         }
 
         binding.addLocationButton.setOnClickListener{
-            startActivity(Intent(requireContext(), MapActivity::class.java)) // запросить разрешения на геолокацию
+            startActivity(Intent(requireContext(), MapActivity::class.java))
+        }
+
+        binding.locationFilterSwitch.setOnCheckedChangeListener{ _, isActivated ->
+            search(binding.searchEditText.text.toString())
+
+            binding.addLocationButton.visibility = if(isActivated) View.VISIBLE else View.GONE
         }
 
         return binding.root
     }
 
     private fun toggleViewSize() {
-        if (isExpanded) {
-            binding.filtersLayout.visibility = View.GONE
-        } else {
-            binding.filtersLayout.visibility = View.VISIBLE
-        }
+        binding.filtersLayout.visibility = if(isExpanded) View.GONE else View.VISIBLE
         isExpanded = !isExpanded
     }
 
+    fun EditText.afterChangeWithDebounce(debounceTime: Long = 500L, onDebouncedInput: (String) -> Unit) {
+        var debounceJob: Job? = null
 
+        this.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                debounceJob?.cancel()
+                debounceJob = CoroutineScope(Dispatchers.Main).launch {
+                    delay(debounceTime)
+                    s?.toString()?.let { onDebouncedInput(it) }
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
 
     private fun showInputDialog() {
         val input = EditText(requireContext())
@@ -137,29 +155,20 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
         }else{
             binding.tagsRV.visibility = View.GONE
         }
-        //viewModel.getByText(binding.searchEditText.text.toString(), tagList)
-        viewModel.getByCoordinates(binding.searchEditText.text.toString(), tagList, "2.3522", "48.8566", "5")
+        search(binding.searchEditText.text.toString())
     }
 
-
-
-//    companion object {
-//        /**
-//         * Use this factory method to create a new instance of
-//         * this fragment using the provided parameters.
-//         *
-//         * @param param1 Parameter 1.
-//         * @param param2 Parameter 2.
-//         * @return A new instance of fragment Search.
-//         */
-//        // TODO: Rename and change types and number of parameters
-//        @JvmStatic
-//        fun newInstance(param1: String, param2: String) =
-//            SearchFragment().apply {
-//                arguments = Bundle().apply {
-//                    putString(ARG_PARAM1, param1)
-//                    putString(ARG_PARAM2, param2)
-//                }
-//            }
-//    }
+    private fun search(input: String?) {
+        binding.nothingText.visibility = View.GONE
+        binding.loadingBar.visibility = View.VISIBLE
+        if(input!!.isNotEmpty()){
+            if(binding.locationFilterSwitch.isActivated){
+                viewModel.getWithCoordinates(binding.searchEditText.text.toString(), tagList, "2.3522", "48.8566", "5")
+            }else{
+                viewModel.getByText(binding.searchEditText.text.toString(), tagList)
+            }
+        }else{
+            viewModel.getAllForms()
+        }
+    }
 }

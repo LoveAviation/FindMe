@@ -53,4 +53,8 @@
     <string name="add_location_to_sort">Add location to sort</string>
     <string name="select">Select</string>
     <string name="filter_by_location">Filter by location</string>
+    <string name="this_is_avatar_of_author_of_form">This is avatar of author of form</string>
+    <string name="nothing_was_found_for_your_request">Nothing was found for your request...</string>
+    <string name="your_avatar_that_will_be_on_form">Your avatar that will be on form</string>
+    <string name="use_name_and_surname">Use name and surname</string>
 </resources>

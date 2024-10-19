@@ -2,21 +2,17 @@ package com.example.findme.presentation.locationMap
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
+import android.view.MotionEvent
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.caverock.androidsvg.BuildConfig
 import com.example.findme.R
 import com.example.findme.databinding.ActivityMapBinding
@@ -29,8 +25,9 @@ import com.google.android.gms.location.Priority
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import kotlin.getValue
+import org.osmdroid.views.overlay.Overlay
 
 class MapActivity : AppCompatActivity() {
 
@@ -40,12 +37,33 @@ class MapActivity : AppCompatActivity() {
 
     private var latitude = 0.0
     private var longitude = 0.0
+    private var marker: Marker? = null
 
     private val launcher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { map ->
         if(map.values.isNotEmpty() && map.values.all { it }){
             startLocation()
+        }
+    }
+
+    val overlay = object : Overlay() {
+        override fun onSingleTapConfirmed(e: MotionEvent, mapView: MapView): Boolean {
+            val projection = mapView.projection
+            val geoPoint = projection.fromPixels(e.x.toInt(), e.y.toInt()) as GeoPoint
+
+            if (marker == null) {
+                marker = Marker(mapView).apply {
+                    icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_pin, null)
+                }
+                mapView.overlays.add(marker)
+            }
+
+            marker?.position = geoPoint
+            marker?.title = "Selected location"
+            marker?.snippet = "Click \"Select\" to confirm"
+
+            return true
         }
     }
 
@@ -75,6 +93,8 @@ class MapActivity : AppCompatActivity() {
             }
         }
 
+        binding.mapView.overlays.add(overlay)
+
         binding.backButton.setOnClickListener{
             finish()
         }
@@ -97,16 +117,19 @@ class MapActivity : AppCompatActivity() {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
+
             latitude = result.lastLocation!!.latitude
             longitude = result.lastLocation!!.longitude
-            val marker = Marker(binding.mapView).apply {
+
+            marker = Marker(binding.mapView).apply {
                 position = GeoPoint(latitude, longitude)
                 title = "Your Location"
                 snippet = "App founded you!"
                 icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_pin, null)
             }
+
             binding.mapView.overlays.add(marker)
-            binding.mapView.controller.setZoom(15.0)
+            binding.mapView.controller.setZoom(20.0)
             binding.mapView.controller.setCenter(GeoPoint(latitude, longitude))
         }
     }

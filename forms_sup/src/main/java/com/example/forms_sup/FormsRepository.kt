@@ -11,8 +11,8 @@ class FormsRepository @Inject constructor(
     private val mapper : Mapper
 ) {
 
-    suspend fun addForm(title: String, description: String, tags: List<String>, location: String = ""){
-        useCase.addForm(title, description, tags, location)
+    suspend fun addForm(title: String, description: String, tags: List<String>, location: String?, author: String, author_avatar: String){
+        useCase.addForm(title, description, tags, location, author, author_avatar)
     }
 
     suspend fun getAllForms(): List<Form>{

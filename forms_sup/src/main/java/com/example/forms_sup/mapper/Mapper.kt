@@ -11,7 +11,9 @@ class Mapper @Inject constructor(){
             title = input.title,
             description = input.description,
             tags = input.tags,
-            location = ""
+            location = "",
+            author = input.author,
+            author_avatar = input.author_avatar
         )
     }
 

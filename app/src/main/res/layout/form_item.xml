@@ -10,30 +10,58 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/itemTitle"
-            android:layout_width="wrap_content"
+        <!-- Левый блок с текстом -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:text="Item Title" />
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/itemDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:text="Item Description"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:lines="1"/>
+            <TextView
+                android:id="@+id/itemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:text="Item Title" />
 
+            <TextView
+                android:id="@+id/itemDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"
+                android:textColor="@color/gray"
+                android:text="Item Description"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:lines="1" />
+
+            <TextView
+                android:id="@+id/tagsList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"
+                android:textColor="@color/design_default_color_primary"
+                android:text="Tags"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:lines="1" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="83.5dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile_button"
+            />
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

@@ -9,7 +9,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_layout"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         app:layout_constraintEnd_toStartOf="@id/filters_button"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="20dp"
@@ -82,6 +82,7 @@
             android:id="@+id/addLocationButton"
             android:layout_width="0dp"
             android:layout_height="40dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
@@ -108,4 +109,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filters_layout"/>
+
+    <ProgressBar
+        android:id="@+id/loading_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/searchResultView"
+        app:layout_constraintBottom_toBottomOf="@id/searchResultView"
+        app:layout_constraintStart_toStartOf="@id/searchResultView"
+        app:layout_constraintEnd_toEndOf="@id/searchResultView"/>
+
+    <TextView
+        android:id="@+id/nothing_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/nothing_was_found_for_your_request"
+        app:layout_constraintTop_toTopOf="@id/searchResultView"
+        app:layout_constraintBottom_toBottomOf="@id/searchResultView"
+        app:layout_constraintStart_toStartOf="@id/searchResultView"
+        app:layout_constraintEnd_toEndOf="@id/searchResultView"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

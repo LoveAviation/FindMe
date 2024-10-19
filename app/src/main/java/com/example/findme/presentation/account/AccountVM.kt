@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import com.example.account_fb.data.DatabaseUC
 import com.example.account_fb.data.StorageUC
 import com.example.account_fb.entity.Account
+import com.example.account_fb.other.ErrorStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -22,6 +23,9 @@ class AccountVM @Inject constructor(
     private val storageUC : StorageUC
 ): ViewModel() {
 
+    private val _error = MutableLiveData<ErrorStates>(ErrorStates.NULL)
+    val error: LiveData<ErrorStates> get() = _error
+
     private var _signInState = MutableLiveData<String?>()
     val signInState: LiveData<String?> get() = _signInState
 
@@ -30,6 +34,7 @@ class AccountVM @Inject constructor(
 
     fun signIn(lifecycleOwner: LifecycleOwner, login: String, password: String, name: String, surname: String, urlAvatar: Uri?){
         _signInState.value = null
+        waitForError(lifecycleOwner)
         if(urlAvatar != null){
             storageUC.uploadAvatar(urlAvatar, login)
             storageUC.storageState.observe(lifecycleOwner){ avatarURL ->
@@ -53,6 +58,7 @@ class AccountVM @Inject constructor(
     }
 
     fun logIn(lifecycleOwner: LifecycleOwner, login: String, password: String){
+        waitForError(lifecycleOwner)
         databaseUC.loginUser(login, password)
         databaseUC.loginResult.observe(lifecycleOwner){ result ->
             if(result != null){
@@ -66,6 +72,7 @@ class AccountVM @Inject constructor(
     val editState: LiveData<String?> get() = _editState
 
     fun edit(lifecycleOwner: LifecycleOwner, login: String, name: String, surname: String, password: String, avatar: String?){
+        waitForError(lifecycleOwner)
         if(avatar != null) {
             storageUC.changeAvatar(avatar.toUri(), login)
             storageUC.storageState.observe(lifecycleOwner){ avatarUrl ->
@@ -83,8 +90,16 @@ class AccountVM @Inject constructor(
         databaseUC.editResult.observe(lifecycleOwner){ result ->
             when(result){
                 "SUCCESS" -> _editState.value = avatar
-                "ERROR" -> _editState.value = "ERROR"
             }
+        }
+    }
+
+    private fun waitForError(lifecycleOwner: LifecycleOwner) {
+        storageUC.errorStorage.observe(lifecycleOwner){ error ->
+            _error.value = error!!
+        }
+        databaseUC.errorDatabase.observe(lifecycleOwner){ error ->
+            _error.value = error!!
         }
     }
 }

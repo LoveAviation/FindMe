@@ -25,8 +25,8 @@ class UseCase @Inject constructor(){
         install(Postgrest)
     }
 
-    suspend fun addForm(title: String, description: String, tags: List<String>, location: String = ""){
-        supabase.from(SUPABASE_NAME_KEY).insert(FormDto(title, description, tags, location))
+    suspend fun addForm(title: String, description: String, tags: List<String>, location: String?, author: String = "", author_avatar: String = ""){
+        supabase.from(SUPABASE_NAME_KEY).insert(FormDto(title, description, tags, location, author, author_avatar))
     }
 
     suspend fun allForms(): List<Form>{
@@ -46,8 +46,7 @@ class UseCase @Inject constructor(){
 //        return result.decodeList()
 //    }
 
-
-    suspend fun getFormsByText(wordsToFind: String, tags: List<String>): List<FormDto>{
+    suspend fun getFormsByText(wordsToFind: String, tags: List<String>): List<FormDto> {
         val words = wordsToFind.split(" ").filter { it.isNotBlank() }
 
         val result = supabase
@@ -57,35 +56,47 @@ class UseCase @Inject constructor(){
                     and {
                         or {
                             words.forEach { word ->
-                                ilike("title", "%$word%")
                                 ilike("description", "%$word%")
+                                ilike("title", "%$word%")
                             }
                         }
-                        if(tags.isNotEmpty()){
+                        if (tags.isNotEmpty()) {
                             contains("tags", tags)
                         }
                     }
                 }
             }.decodeList<FormDto>()
 
-
-        fun similarityScore(description: String, words: List<String>): Int {
+        fun similarityScore(title: String, description: String, words: List<String>): Int {
+            val titleWords = title.split(" ").filter { it.isNotBlank() }
             val descriptionWords = description.split(" ").filter { it.isNotBlank() }
-            val commonWordsCount = words.count { word ->
+
+            val commonTitleWordsCount = words.count { word ->
+                titleWords.contains(word)
+            }
+
+            val commonDescriptionWordsCount = words.count { word ->
                 descriptionWords.contains(word)
             }
 
-            val orderMatchScore = descriptionWords.zip(words).count { (descWord, queryWord) ->
+            val orderMatchScoreTitle = titleWords.zip(words).count { (titleWord, queryWord) ->
+                titleWord.equals(queryWord, ignoreCase = true)
+            }
+
+            val orderMatchScoreDescription = descriptionWords.zip(words).count { (descWord, queryWord) ->
                 descWord.equals(queryWord, ignoreCase = true)
             }
 
-            return commonWordsCount * 10 + orderMatchScore * 5
+            return commonTitleWordsCount * 12 + orderMatchScoreTitle * 6 +
+                    commonDescriptionWordsCount * 10 + orderMatchScoreDescription * 5
         }
 
-        return result.sortedByDescending { result ->
-            similarityScore(result.description, words)
+
+        return result.sortedByDescending { form ->
+            similarityScore(form.title, form.description, words)
         }
     }
+
 
     suspend fun searchByCoordinates(longitude: String, latitude:String, radius: String): List<FormDto>{
         val result = supabase.from(SUPABASE_NAME_KEY).postgrest.rpc(

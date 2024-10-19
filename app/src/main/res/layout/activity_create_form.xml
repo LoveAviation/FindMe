@@ -25,6 +25,38 @@
             android:paddingVertical="5dp"
             app:navigationIcon="@drawable/back_button_resize" />
 
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="@string/click_to_choose_avatar"
+            app:srcCompat="@drawable/profile_button"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
+        <TextView
+            android:id="@+id/avatar_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/your_avatar_that_will_be_on_form"
+            android:textColor="@color/gray"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Author"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/use_name_and_surname"
+            android:textColor="@color/gray"
+            android:layout_gravity="center_horizontal" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/title_textInpLayout"
             android:layout_width="match_parent"
@@ -60,16 +92,74 @@
                 android:maxLength="300"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tags_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/addTagButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                app:layout_constraintEnd_toStartOf="@id/clearTagsButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/add_tag_to_find"/>
+
+            <Button
+                android:id="@+id/clearTagsButton"
+                android:layout_width="0dp"
+                android:enabled="false"
+                android:layout_height="40dp"
+                app:layout_constraintStart_toEndOf="@id/addTagButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/clear"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tagsRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/addTagButton" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/addLocationButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                app:layout_constraintEnd_toStartOf="@id/clearLocationButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/add_tag_to_find"/>
+
+            <Button
+                android:id="@+id/clearLocationButton"
+                android:layout_width="0dp"
+                android:enabled="false"
+                android:layout_height="40dp"
+                app:layout_constraintStart_toEndOf="@id/addLocationButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/clear"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <Button
             android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="20dp"
             android:text="@string/create_btn_text"
             android:paddingHorizontal="30dp"
             android:backgroundTint="@color/selected"
             android:textSize="24sp"/>
-
     </LinearLayout>
 
 </ScrollView>
