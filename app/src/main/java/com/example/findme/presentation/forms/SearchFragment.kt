@@ -1,15 +1,20 @@
 package com.example.findme.presentation.forms
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.findme.R
@@ -17,6 +22,7 @@ import com.example.findme.databinding.FragmentSearchBinding
 import com.example.findme.presentation.forms.adapter.FormsAdapter
 import com.example.findme.presentation.forms.adapter.TagsAdapter
 import com.example.findme.presentation.locationMap.MapActivity
+import com.example.forms_sup.entity.Form
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,14 +30,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 @AndroidEntryPoint
 class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
-    private var param1: String? = null
-    private var param2: String? = null
-
     private lateinit var _binding : FragmentSearchBinding
     private val binding get() = _binding
 
@@ -39,11 +39,28 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
 
     private val tagList: MutableList<String> = mutableListOf()
 
+    private lateinit var mapResultLauncher: ActivityResultLauncher<Intent>
+
+    private var longitude : String? = null
+    private var latitude : String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
+        mapResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                longitude = result.data?.getStringExtra(MapActivity.LONGITUDE_KEY)
+                latitude = result.data?.getStringExtra(MapActivity.LATITUDE_KEY)
+            }
+
+            if(longitude != null && latitude != null){
+                binding.selectedCoordinates.text = "Longitude: $longitude; Latitude: $latitude"
+            }else{
+                binding.selectedCoordinates.text = getString(R.string.you_haven_t_selected_coordinates)
+            }
+            search(binding.searchEditText.text.toString())
         }
     }
 
@@ -65,7 +82,15 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
             if(result.isEmpty()){
                binding.nothingText.visibility = View.VISIBLE
             }
-            binding.searchResultView.adapter = FormsAdapter(result)
+            binding.searchResultView.adapter = FormsAdapter(result) { selectedItem ->
+                val intent = Intent(requireContext(), FormActivity::class.java)
+                intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
+                intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
+                intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
+                intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
+                intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
+                startActivity(intent)
+            }
         }
 
         binding.searchEditText.afterChangeWithDebounce { string ->
@@ -87,13 +112,14 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
         }
 
         binding.addLocationButton.setOnClickListener{
-            startActivity(Intent(requireContext(), MapActivity::class.java))
+            mapResultLauncher.launch(Intent(requireContext(), MapActivity::class.java))
         }
 
         binding.locationFilterSwitch.setOnCheckedChangeListener{ _, isActivated ->
             search(binding.searchEditText.text.toString())
 
             binding.addLocationButton.visibility = if(isActivated) View.VISIBLE else View.GONE
+            binding.selectedCoordinates.visibility = if(isActivated) View.VISIBLE else View.GONE
         }
 
         return binding.root
@@ -161,9 +187,9 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
     private fun search(input: String?) {
         binding.nothingText.visibility = View.GONE
         binding.loadingBar.visibility = View.VISIBLE
-        if(input!!.isNotEmpty()){
-            if(binding.locationFilterSwitch.isActivated){
-                viewModel.getWithCoordinates(binding.searchEditText.text.toString(), tagList, "2.3522", "48.8566", "5")
+        if(input!!.isNotEmpty() || tagList.isNotEmpty() || (longitude != null && latitude != null)){
+            if(binding.locationFilterSwitch.isChecked){
+                viewModel.getWithCoordinates(binding.searchEditText.text.toString(), tagList, longitude.toString(), latitude.toString(), "200000")
             }else{
                 viewModel.getByText(binding.searchEditText.text.toString(), tagList)
             }
@@ -171,4 +197,10 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
             viewModel.getAllForms()
         }
     }
+
+    private fun listFormToBasic(input: List<String>): String{
+        if (input.isEmpty()) return ""
+        return input.joinToString(", ")
+    }
+
 }

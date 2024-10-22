@@ -48,4 +48,6 @@ dependencies {
 
     implementation("io.github.jan-tennert.supabase:postgrest-kt:2.6.0")
     implementation("io.ktor:ktor-client-android:2.3.12")
+
+    implementation("org.locationtech.jts:jts-core:1.18.1")
 }

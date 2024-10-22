@@ -20,6 +20,9 @@
         android:theme="@style/Theme.FindMe"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.forms.FormActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.locationMap.MapActivity"
             android:exported="false" />
         <activity

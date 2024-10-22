@@ -78,6 +78,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/addTagButton" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/locationFilterSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/addLocationButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/filter_by_location"
+            app:layout_constraintTop_toBottomOf="@id/tagsRV"/>
+
         <Button
             android:id="@+id/addLocationButton"
             android:layout_width="0dp"
@@ -88,15 +98,15 @@
             app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
             android:text="@string/add_location_to_sort"/>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/locationFilterSwitch"
+        <TextView
+            android:id="@+id/selected_coordinates"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/addLocationButton"
+            android:visibility="gone"
+            android:text="@string/you_haven_t_selected_coordinates"
+            app:layout_constraintTop_toBottomOf="@id/addLocationButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:text="@string/filter_by_location"
-            app:layout_constraintTop_toBottomOf="@id/tagsRV"/>
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

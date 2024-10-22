@@ -53,6 +53,13 @@
                 android:layout_gravity="center"
                 android:text="@string/click_to_choose_avatar" />
 
+            <Button
+                android:id="@+id/clear_button"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:text="@string/clear"/>
+
             <TextView
                 android:id="@+id/login_text"
                 android:layout_width="match_parent"

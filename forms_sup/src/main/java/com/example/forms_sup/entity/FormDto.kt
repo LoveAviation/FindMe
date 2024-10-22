@@ -16,7 +16,9 @@ data class FormDto(
     @SerialName("location")
     val location: String?,
     @SerialName("author")
-    val author: String? = "",//ЭТО БУДЕТ ЛОГИН
+    val author: String?,
     @SerialName("author_avatar")
-    val author_avatar: String? = ""//ЭТО БУДЕТ ЛОГИН
+    val author_avatar: String?,
+    @SerialName("author_login")
+    val author_login: String
 )

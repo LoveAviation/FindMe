@@ -71,17 +71,20 @@ class AccountVM @Inject constructor(
     private var _editState = MutableLiveData<String?>()
     val editState: LiveData<String?> get() = _editState
 
-    fun edit(lifecycleOwner: LifecycleOwner, login: String, name: String, surname: String, password: String, avatar: String?){
+    fun edit(lifecycleOwner: LifecycleOwner, login: String, name: String, surname: String, password: String, avatar: Uri?){
         waitForError(lifecycleOwner)
         if(avatar != null) {
-            storageUC.changeAvatar(avatar.toUri(), login)
+            storageUC.changeAvatar(avatar, login)
             storageUC.storageState.observe(lifecycleOwner){ avatarUrl ->
                 if(avatarUrl != null){
                     editAccDB(lifecycleOwner, login, name, surname, password, avatarUrl)
                 }
             }
         }else{
-            editAccDB(lifecycleOwner, login, name, surname, password, avatar)
+            storageUC.deleteAvatar(login)
+            storageUC.storageState.observe(lifecycleOwner){ result ->
+                editAccDB(lifecycleOwner, login, name, surname, password, "")
+            }
         }
     }
 
@@ -89,7 +92,9 @@ class AccountVM @Inject constructor(
         databaseUC.changeData(login, name, surname, password, avatar)
         databaseUC.editResult.observe(lifecycleOwner){ result ->
             when(result){
-                "SUCCESS" -> _editState.value = avatar
+                "SUCCESS" -> {
+                    _editState.value = avatar
+                }
             }
         }
     }

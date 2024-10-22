@@ -1,11 +1,9 @@
 package com.example.findme.presentation
 
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import jakarta.inject.Inject
 
-@HiltViewModel
-class SaveDataVM @Inject constructor(): ViewModel() {
+
+class SaveDataVM @Inject constructor() {
     var accLogin: String? = null
     var accPassword: String? = null
     var accName: String? = null

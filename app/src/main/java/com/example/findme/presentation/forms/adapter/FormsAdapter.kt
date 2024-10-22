@@ -7,7 +7,9 @@ import com.bumptech.glide.Glide
 import com.example.findme.databinding.FormItemBinding
 import com.example.forms_sup.entity.Form
 
-class FormsAdapter(private val items: List<Form>) : RecyclerView.Adapter<ItemViewHolder>() {
+class FormsAdapter(
+    private val items: List<Form>,
+    private val onItemClick: (Form) -> Unit) : RecyclerView.Adapter<ItemViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
 
         val binding = FormItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -24,6 +26,10 @@ class FormsAdapter(private val items: List<Form>) : RecyclerView.Adapter<ItemVie
                 .load(items[position].author_avatar)
                 .circleCrop()
                 .into(holder.binding.avatar)
+        }
+
+        holder.binding.mainLayout.setOnClickListener{
+            onItemClick(items[position])
         }
     }
 

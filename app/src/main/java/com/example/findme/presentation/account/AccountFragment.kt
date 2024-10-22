@@ -9,12 +9,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.findme.R
 import com.example.findme.databinding.FragmentAccountBinding
 import com.example.findme.other.OnDataClearListener
 import com.example.findme.presentation.MainActivity
+import com.example.findme.presentation.forms.FormsVM
+import com.example.findme.presentation.forms.adapter.FormsAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
 @AndroidEntryPoint
 class AccountFragment : Fragment() {
@@ -26,8 +31,11 @@ class AccountFragment : Fragment() {
 
     private lateinit var _binding : FragmentAccountBinding
     private val binding get() = _binding
+    private val viewModel : FormsVM by viewModels()
 
     private var dataClearListener: OnDataClearListener? = null
+
+    private var isExpanded = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -56,10 +64,10 @@ class AccountFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.accountName.text = "$accSurname $accName"
+        binding.accountName.text = "$accName $accSurname"
         binding.accountLogin.text = accLogin
 
-        if (accAvatar != "" && accAvatar != "null"){ // НАДО ИСПРАВИТЬ "null"
+        if (accAvatar != "" && accAvatar != "null"){
             Glide.with(this)
                 .load(accAvatar)
                 .circleCrop()
@@ -68,6 +76,22 @@ class AccountFragment : Fragment() {
 
         binding.exitAccount.setOnClickListener {
             showAlertDialog()
+        }
+
+        viewModel.getAccountForms(accLogin.toString())
+        viewModel.forms.observe(viewLifecycleOwner){ forms ->
+            binding.myFormsRV.adapter = FormsAdapter(forms){}
+        }
+        binding.myFormsRV.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.myForms.setOnClickListener{
+            if(isExpanded){
+                binding.myFormsRV.visibility = View.GONE
+                isExpanded = false
+            }else{
+                binding.myFormsRV.visibility = View.VISIBLE
+                isExpanded = true
+            }
         }
 
         binding.editButton.setOnClickListener{

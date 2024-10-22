@@ -46,11 +46,13 @@
             android:id="@+id/author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
             android:text="Author"/>
 
         <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/name_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/use_name_and_surname"
@@ -148,6 +150,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:text="@string/clear"/>
+            <TextView
+                android:id="@+id/selected_coordinates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/addLocationButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
@@ -155,7 +165,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="@string/create_btn_text"
             android:paddingHorizontal="30dp"
             android:backgroundTint="@color/selected"

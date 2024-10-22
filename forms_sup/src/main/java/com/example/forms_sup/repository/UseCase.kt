@@ -1,5 +1,7 @@
 package com.example.forms_sup.repository
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import com.example.forms_sup.entity.Form
 import com.example.forms_sup.entity.FormDto
 import com.example.forms_sup.mapper.Mapper
@@ -25,26 +27,30 @@ class UseCase @Inject constructor(){
         install(Postgrest)
     }
 
-    suspend fun addForm(title: String, description: String, tags: List<String>, location: String?, author: String = "", author_avatar: String = ""){
-        supabase.from(SUPABASE_NAME_KEY).insert(FormDto(title, description, tags, location, author, author_avatar))
+    suspend fun addForm(title: String, description: String, tags: List<String>, location: String?, author: String?, author_avatar: String?, author_login: String): Boolean{
+        supabase.from(SUPABASE_NAME_KEY).insert(FormDto(title, description, tags, location, author, author_avatar, author_login))
+
+        Log.d(TAG, "STARTING RESULT")
+        val result = supabase.from(SUPABASE_NAME_KEY).select{
+            filter {
+                and{
+                    eq("title", title)
+                    eq("description", description)
+                    if(location != null){
+                        eq("location", location)
+                    }
+                    eq("author_login", author_login)
+                }
+            }
+        }.decodeList<FormDto>()
+
+        return result.isNotEmpty()
     }
 
     suspend fun allForms(): List<Form>{
         val result = supabase.from(SUPABASE_NAME_KEY).select().decodeList<FormDto>()
-
         return converter.FromDtoToForm(result)
     }
-
-//    suspend fun getFormsByTags(wordsToFind: List<String>): List<FormDto> {
-//        val result = supabase
-//            .from(SUPABASE_NAME_KEY)
-//            .select {
-//                filter {
-//                    contains("tags", listOf(wordsToFind))
-//                }
-//            }
-//        return result.decodeList()
-//    }
 
     suspend fun getFormsByText(wordsToFind: String, tags: List<String>): List<FormDto> {
         val words = wordsToFind.split(" ").filter { it.isNotBlank() }
@@ -86,7 +92,6 @@ class UseCase @Inject constructor(){
             val orderMatchScoreDescription = descriptionWords.zip(words).count { (descWord, queryWord) ->
                 descWord.equals(queryWord, ignoreCase = true)
             }
-
             return commonTitleWordsCount * 12 + orderMatchScoreTitle * 6 +
                     commonDescriptionWordsCount * 10 + orderMatchScoreDescription * 5
         }
@@ -109,5 +114,28 @@ class UseCase @Inject constructor(){
         ).decodeAs<List<FormDto>>()
 
         return result
+    }
+
+    suspend fun myForms(login: String): List<FormDto>{
+        val myForms = supabase.from(SUPABASE_NAME_KEY).select{
+            filter {
+                eq("author_login", login)
+            }
+        }.decodeAs<List<FormDto>>()
+
+        return myForms
+    }
+
+    suspend fun updateAccInfo(login: String, author: String, author_avatar: String?){
+        supabase.from(SUPABASE_NAME_KEY).update(
+            {
+                set("author", author)
+                set("author_avatar", author_avatar)
+            }
+        ) {
+            filter {
+                eq("author_login", login)
+            }
+        }
     }
 }

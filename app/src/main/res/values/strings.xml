@@ -34,7 +34,7 @@
     <string name="back">Back</string>
     <string name="enter_your_login">Enter your login</string>
     <string name="enter_your_password">Enter your password</string>
-    <string name="click_to_choose_avatar">CLick to choose avatar</string>
+    <string name="click_to_choose_avatar">Click on image to choose avatar</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="login">Login</string>
     <string name="submit">Submit</string>
@@ -57,4 +57,6 @@
     <string name="nothing_was_found_for_your_request">Nothing was found for your request...</string>
     <string name="your_avatar_that_will_be_on_form">Your avatar that will be on form</string>
     <string name="use_name_and_surname">Use name and surname</string>
+    <string name="you_haven_t_selected_coordinates">You haven\'t selected coordinates</string>
+    <string name="its_avatar_of_author">Its avatar of author</string>
 </resources>

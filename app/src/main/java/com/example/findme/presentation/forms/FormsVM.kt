@@ -1,5 +1,8 @@
 package com.example.findme.presentation.forms
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,17 +22,14 @@ class FormsVM @Inject constructor(
     private var _forms = MutableLiveData<List<Form>>()
     val forms: LiveData<List<Form>> get() = _forms
 
+    private val _formAddingResult = MutableLiveData<Boolean?>(null)
+    val formAddingResult: LiveData<Boolean?> get() = _formAddingResult
+
     fun getAllForms(){
         viewModelScope.launch {
             _forms.value = formsRep.getAllForms()
         }
     }
-
-//    fun getByTags(tags: List<String>){
-//        viewModelScope.launch {
-//            _forms.value = formsRep.getByTags(tags)
-//        }
-//    }
 
     fun getByText(wordsToFind: String, tags: List<String>){
         viewModelScope.launch{
@@ -41,14 +41,32 @@ class FormsVM @Inject constructor(
         viewModelScope.launch{
             val formsByText = async {formsRep.getByText(wordsToFind, tags)}.await()
             val formsByCoordinates = async {formsRep.getByCoordinates(longitude, latitude, radius)}.await()
-
+            
             _forms.value = formsByText.intersect(formsByCoordinates).toList()
         }
     }
 
-//    fun getCoords(longitude: String, latitude: String, radius: String){
-//        viewModelScope.launch{
-//            _forms.value = formsRep.getByCoordinates(longitude, latitude, radius)
-//        }
-//    }
+    fun addForm(lifecycleOwner: LifecycleOwner,title: String, description: String, tags: List<String>, longitude: String, latitude: String, author: String, author_avatar: String?, author_login: String){
+        viewModelScope.launch{
+            var avatar = author_avatar
+            if(author_avatar.isNullOrEmpty()) avatar = null
+            formsRep.addForm(title, description, tags, longitude, latitude, author, avatar, author_login)
+            formsRep.formInsertionResult.observe(lifecycleOwner){ result ->
+                if(result != null){
+                    _formAddingResult.value = result
+                }
+            }
+        }
+    }
+    fun getAccountForms(login: String){
+        viewModelScope.launch{
+            _forms.value = formsRep.myForms(login)
+        }
+    }
+
+    fun updateAccInfo(login: String, author: String, author_avatar: String?){
+        viewModelScope.launch{
+            formsRep.updateAccInfo(login, author, author_avatar)
+        }
+    }
 }

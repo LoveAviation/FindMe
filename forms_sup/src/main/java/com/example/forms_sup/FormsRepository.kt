@@ -1,8 +1,14 @@
 package com.example.forms_sup
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.forms_sup.entity.Form
 import com.example.forms_sup.mapper.Mapper
 import com.example.forms_sup.repository.UseCase
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.io.WKBWriter
+import org.locationtech.jts.geom.Point
 import javax.inject.Inject
 
 
@@ -11,17 +17,26 @@ class FormsRepository @Inject constructor(
     private val mapper : Mapper
 ) {
 
-    suspend fun addForm(title: String, description: String, tags: List<String>, location: String?, author: String, author_avatar: String){
-        useCase.addForm(title, description, tags, location, author, author_avatar)
+    private val _formInsertionResult = MutableLiveData<Boolean?>(null)
+    val formInsertionResult: LiveData<Boolean?> get() = _formInsertionResult
+
+    fun encodeToWKB(longitude: String?, latitude: String?): String? {
+        if(longitude == "null" || latitude == "null") return null
+        val geometryFactory = GeometryFactory()
+        val point: Point = geometryFactory.createPoint(Coordinate(longitude!!.toDouble(), latitude!!.toDouble()))
+        val wkbWriter = WKBWriter()
+        val wkb: ByteArray = wkbWriter.write(point)
+
+        return wkb.joinToString("") { String.format("%02X", it) }
+    }
+
+    suspend fun addForm(title: String, description: String, tags: List<String>, longitude: String?, latitude: String?, author: String, author_avatar: String?, author_login: String){
+        _formInsertionResult.value = useCase.addForm(title, description, tags, encodeToWKB(longitude, latitude), author, author_avatar, author_login)
     }
 
     suspend fun getAllForms(): List<Form>{
         return useCase.allForms()
     }
-
-//    suspend fun getByTags(tags: List<String>): List<Form>{
-//        return mapper.FromDtoToForm(useCase.getFormsByTags(tags))
-//    }
 
     suspend fun getByText(wordsToFind: String, tags: List<String>): List<Form>{
         return mapper.FromDtoToForm(useCase.getFormsByText(wordsToFind, tags))
@@ -29,6 +44,14 @@ class FormsRepository @Inject constructor(
 
     suspend fun getByCoordinates(longitude: String, latitude: String, radius: String): List<Form>{
         return mapper.FromDtoToForm(useCase.searchByCoordinates(longitude, latitude, radius))
+    }
+
+    suspend fun myForms(login: String): List<Form>{
+        return mapper.FromDtoToForm(useCase.myForms(login))
+    }
+
+    suspend fun updateAccInfo(login: String, author: String, author_avatar: String?){
+        useCase.updateAccInfo(login, author, author_avatar)
     }
 
 }

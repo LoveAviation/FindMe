@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.forms.FormActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingVertical="5dp"
+        android:theme="?attr/actionBarTheme"
+        app:buttonGravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/back_button_resize"
+        app:title="Title of form"
+        app:titleTextAppearance="@style/ToolBarStyle" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold"
+        android:text="Title of form"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_marginTop="16dp"
+        android:text="Description of form"
+        android:textSize="17sp"/>
+
+    <TextView
+        android:id="@+id/tagsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description"
+        android:layout_marginTop="25dp"
+        android:layout_marginHorizontal="16dp"
+        android:textSize="17sp"
+        android:textColor="@color/gray"
+        android:text="Tags"/>
+
+    <ImageView
+        android:id="@+id/author_avatar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:contentDescription="@string/its_avatar_of_author"
+        android:src="@drawable/profile_button"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toBottomOf="@id/tagsList"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"/>
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Author"
+        app:layout_constraintStart_toEndOf="@id/author_avatar"
+        app:layout_constraintTop_toTopOf="@id/author_avatar"
+        app:layout_constraintBottom_toBottomOf="@id/author_avatar"
+        android:layout_marginStart="16dp"
+        android:textSize="17sp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

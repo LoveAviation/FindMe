@@ -1,6 +1,8 @@
 package com.example.account_fb.data
 
+import android.content.ContentValues.TAG
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.account_fb.other.ErrorStates
@@ -34,8 +36,27 @@ class StorageUC @Inject constructor() {
         _errorStorage.value = ErrorStates.ERROR
         _storageState.value = null
         val oldImageRef = storageReference.child("${login}_avatar")
-        oldImageRef.delete().addOnSuccessListener{
+        oldImageRef.metadata.addOnSuccessListener {
+            oldImageRef.delete().addOnSuccessListener{
+                uploadAvatar(imageUri, login)
+            }.addOnFailureListener{
+                _errorStorage.value = ErrorStates.ERROR
+            }
+        }.addOnFailureListener{
             uploadAvatar(imageUri, login)
+        }
+    }
+
+    fun deleteAvatar(login: String){
+        _errorStorage.value = ErrorStates.ERROR
+        _storageState.value = null
+        val oldImageRef = storageReference.child("${login}_avatar")
+        oldImageRef.metadata.addOnSuccessListener {
+            oldImageRef.delete().addOnSuccessListener{
+                _storageState.value = "DELETED"
+            }.addOnFailureListener{
+                _errorStorage.value = ErrorStates.ERROR
+            }
         }.addOnFailureListener{
             _errorStorage.value = ErrorStates.ERROR
         }

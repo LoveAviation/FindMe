@@ -153,14 +153,6 @@ class RegistrationActivity: AppCompatActivity() {
     }
 
     private fun waitForError(){
-//        CoroutineScope(SupervisorJob() + Dispatchers.IO).async {
-//            Thread.sleep(5500)
-//            withContext(Dispatchers.Main) {
-//                Snackbar.make(binding.root, "Something went wrong", Snackbar.LENGTH_LONG).show()
-//                binding.loadingBar.visibility = View.GONE
-//                binding.button.isEnabled = true
-//            }
-//        }
         viewModel.error.observe(this){ e ->
             when(e){
                 ErrorStates.WRONG_PASSWORD -> {
@@ -191,7 +183,7 @@ class RegistrationActivity: AppCompatActivity() {
         val name = binding.nameEditText.text.toString().trim()
         val surname = binding.surnameEditText.text.toString().trim()
 
-        if ((name.length >= 2 && name.matches(namesRegex)) && (surname.trim().length >= 2 && surname.matches(namesRegex))){
+        if (!(name.length >= 2 && name.matches(namesRegex)) && (surname.trim().length >= 2 && surname.matches(namesRegex))){
             Snackbar.make(binding.root, "Invalid input", Snackbar.LENGTH_LONG).show()
         }
         return (name.length >= 2 && name.matches(namesRegex)) && (surname.trim().length >= 2 && surname.matches(namesRegex))

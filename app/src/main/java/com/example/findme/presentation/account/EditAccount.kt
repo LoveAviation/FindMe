@@ -13,7 +13,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
 import com.example.account_fb.entity.Account
 import com.example.findme.databinding.ActivityEditAccountBinding
@@ -23,6 +22,8 @@ import com.example.findme.presentation.MainActivity.Companion.KEY_LOGIN
 import com.example.findme.presentation.MainActivity.Companion.KEY_NAME
 import com.example.findme.presentation.MainActivity.Companion.KEY_PASSWORD
 import com.example.findme.presentation.MainActivity.Companion.KEY_SURNAME
+import com.example.findme.R
+import com.example.findme.presentation.forms.FormsVM
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,12 +35,15 @@ class EditAccount : AppCompatActivity() {
     private var localURI: Uri? = null
 
     private val viewModel : AccountVM by viewModels()
+    private val supabaseViewModel : FormsVM by viewModels()
 
     private lateinit var login : String
     private lateinit var password : String
     private lateinit var name : String
     private lateinit var surname : String
-    private lateinit var avatar : String
+    private var avatar : String? = null
+
+    private var avatarIsChanged = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,9 +66,16 @@ class EditAccount : AppCompatActivity() {
             finish()
         }
 
+        binding.clearButton.setOnClickListener{
+            avatar = null
+            avatarIsChanged = true
+            binding.avatar.setImageResource(R.drawable.profile_button)
+        }
+
         binding.avatar.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
+            avatarIsChanged = true
             imagePickerLauncher.launch(intent)
         }
 
@@ -79,16 +90,18 @@ class EditAccount : AppCompatActivity() {
                     surnameHere = if (surnameEditText.text!!.isNotEmpty()) { surnameEditText.text.toString() } else { surname }
                     passwordHere = if (passwordEditText.text!!.isNotEmpty()) { passwordEditText.text.toString() } else { password }
                 }
-                if(localURI != null){
-                    viewModel.edit(this, login, nameHere, surnameHere, passwordHere, localURI.toString())
+                if(localURI != null || avatarIsChanged){
+                    viewModel.edit(this, login, nameHere, surnameHere, passwordHere, localURI)
                 }else{
                     viewModel.edit(this, login, nameHere, surnameHere, passwordHere, null)
                 }
 
                 viewModel.editState.observe(this){ avatarResult ->
                     if(avatarResult == "null"){
+                        updateAccInfoInSupa(avatar)
                         returnData(login, Account(passwordHere, nameHere, surnameHere, avatar))
                     }else{
+                        updateAccInfoInSupa(avatarResult)
                         returnData(login, Account(passwordHere, nameHere, surnameHere, avatarResult))
                     }
                 }
@@ -111,7 +124,7 @@ class EditAccount : AppCompatActivity() {
         password = intent?.getStringExtra(KEY_PASSWORD).toString()
         name = intent?.getStringExtra(KEY_NAME).toString()
         surname = intent?.getStringExtra(KEY_SURNAME).toString()
-        avatar = intent?.getStringExtra(KEY_AVATAR).toString()
+        avatar = intent?.getStringExtra(KEY_AVATAR)
 
         with(binding){
             nameEditText.hint = name
@@ -156,6 +169,21 @@ class EditAccount : AppCompatActivity() {
             .load(uri)
             .circleCrop()
             .into(binding.avatar)
+    }
+    private fun updateAccInfoInSupa(author_avatar: String?){
+        var newName = name
+        var newSurname = surname
+        var newAvatar: String? = null
+        if(binding.nameEditText.text!!.isNotEmpty()){
+            newName = binding.nameEditText.text.toString()
+        }
+        if(binding.surnameEditText.text!!.isNotEmpty()){
+            newSurname = binding.surnameEditText.text.toString()
+        }
+        if(author_avatar!!.isNotEmpty()){
+            newAvatar = author_avatar
+        }
+        supabaseViewModel.updateAccInfo(login, "$newName $newSurname", newAvatar)
     }
 
     companion object {
