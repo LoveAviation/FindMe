@@ -21,9 +21,9 @@ class FormsRepository @Inject constructor(
     val formInsertionResult: LiveData<Boolean?> get() = _formInsertionResult
 
     fun encodeToWKB(longitude: String?, latitude: String?): String? {
-        if(longitude == "null" || latitude == "null") return null
+        if(longitude == "null" || longitude == null || latitude == "null" || latitude == null) return null
         val geometryFactory = GeometryFactory()
-        val point: Point = geometryFactory.createPoint(Coordinate(longitude!!.toDouble(), latitude!!.toDouble()))
+        val point: Point = geometryFactory.createPoint(Coordinate(longitude.toDouble(), latitude.toDouble()))
         val wkbWriter = WKBWriter()
         val wkb: ByteArray = wkbWriter.write(point)
 
@@ -35,7 +35,7 @@ class FormsRepository @Inject constructor(
     }
 
     suspend fun getAllForms(): List<Form>{
-        return useCase.allForms()
+        return mapper.FromDtoToForm(useCase.allForms())
     }
 
     suspend fun getByText(wordsToFind: String, tags: List<String>): List<Form>{
@@ -52,6 +52,18 @@ class FormsRepository @Inject constructor(
 
     suspend fun updateAccInfo(login: String, author: String, author_avatar: String?){
         useCase.updateAccInfo(login, author, author_avatar)
+    }
+
+    suspend fun editForm(id: Int, title: String, description: String, tags: List<String>, longitude: String?, latitude: String?, author: String?): Boolean{
+        return useCase.editForm(id, title, description, tags, encodeToWKB(longitude, latitude), author)
+    }
+
+    suspend fun deleteForm(id: Int): Boolean{
+        return useCase.deleteForm(id)
+    }
+
+    suspend fun getFavourites(ids: List<Int>): List<Form>{
+        return mapper.FromDtoToForm(useCase.getFavourites(ids))
     }
 
 }

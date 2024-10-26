@@ -59,4 +59,12 @@
     <string name="use_name_and_surname">Use name and surname</string>
     <string name="you_haven_t_selected_coordinates">You haven\'t selected coordinates</string>
     <string name="its_avatar_of_author">Its avatar of author</string>
+    <string name="tap_to_see_location_of_form">Tap to see location of form</string>
+    <string name="add_location">Add location</string>
+    <string name="change_location">Change location</string>
+    <string name="edit_form">Edit form</string>
+    <string name="save_form">Save form</string>
+    <string name="delete_form">Delete form</string>
+    <string name="tap_to_add_form_to_favourite">Tap to add form to favourite</string>
+    <string name="favourite_forms">Favourite forms</string>
 </resources>

@@ -62,6 +62,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/AvatarImage" />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/myFormsRV"
             android:layout_width="match_parent"
@@ -71,6 +72,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/my_forms" />
+
+        <Button
+            android:id="@+id/favourite_forms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/basic_button"
+            android:text="@string/favourite_forms"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/myFormsRV" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favouriteFormsRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/favourite_forms" />
 
         <Button
             android:id="@+id/exit_account"
@@ -83,7 +107,7 @@
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/myFormsRV" />
+            app:layout_constraintTop_toBottomOf="@id/favouriteFormsRV" />
 
         <ImageButton
             android:id="@+id/editButton"

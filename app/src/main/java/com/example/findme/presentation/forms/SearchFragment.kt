@@ -6,6 +6,8 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
+import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -19,6 +21,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.findme.R
 import com.example.findme.databinding.FragmentSearchBinding
+import com.example.findme.presentation.FavouritesVM
 import com.example.findme.presentation.forms.adapter.FormsAdapter
 import com.example.findme.presentation.forms.adapter.TagsAdapter
 import com.example.findme.presentation.locationMap.MapActivity
@@ -38,6 +41,7 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
     private var isExpanded = false
 
     private val tagList: MutableList<String> = mutableListOf()
+    private var favouritesList : MutableList<Int>? = null
 
     private lateinit var mapResultLauncher: ActivityResultLauncher<Intent>
 
@@ -66,10 +70,19 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
 
     private val viewModel : FormsVM by viewModels()
 
+    private val favVM : FavouritesVM by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        favVM.getAllList()
+        favVM.favForms.observe(viewLifecycleOwner){ result ->
+            if(result != null){
+                favouritesList = result.toMutableList()
+            }
+        }
+
         _binding = FragmentSearchBinding.inflate(layoutInflater)
 
         binding.searchResultView.layoutManager = LinearLayoutManager(requireContext())
@@ -79,22 +92,38 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
 
         viewModel.forms.observe(viewLifecycleOwner){ result ->
             binding.loadingBar.visibility = View.GONE
-            if(result.isEmpty()){
-               binding.nothingText.visibility = View.VISIBLE
+            if(result.isEmpty()) {
+                binding.nothingText.visibility = View.VISIBLE
             }
+
             binding.searchResultView.adapter = FormsAdapter(result) { selectedItem ->
+                var isFavourite = false
+                if (favouritesList != null) {
+                    for(id: Int in favouritesList){
+                        if(id == selectedItem.id){
+                            isFavourite = true
+                            break
+                        }
+                    }
+                }
+                Log.d(TAG, isFavourite.toString()
+                )
                 val intent = Intent(requireContext(), FormActivity::class.java)
+                intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
                 intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
                 intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
                 intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
                 intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
                 intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
+                intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
+
+                intent.putExtra(FormActivity.KEY_FAVOURITE, isFavourite)
                 startActivity(intent)
             }
         }
 
         binding.searchEditText.afterChangeWithDebounce { string ->
-            search(string)
+            search(string.replace(",", ""))
         }
 
         binding.filtersButton.setOnClickListener{
@@ -148,14 +177,16 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
 
     private fun showInputDialog() {
         val input = EditText(requireContext())
+        input.filters = arrayOf(InputFilter.LengthFilter(30))
+        input.inputType = InputType.TYPE_CLASS_TEXT
 
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.add_tag))
             .setMessage(getString(R.string.please_write_tag))
             .setView(input)
             .setPositiveButton(getString(R.string.ok)) { dialog, which ->
-                val result = input.text.toString()
-                if(result.isNotEmpty()){
+                val result = input.text.toString().trim().lowercase().replace(" ", "_")
+                if (result.isNotEmpty()) {
                     tagList.add(result)
                     binding.tagsRV.adapter = TagsAdapter(tagList, this)
                     updateUI()
@@ -201,6 +232,12 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
     private fun listFormToBasic(input: List<String>): String{
         if (input.isEmpty()) return ""
         return input.joinToString(", ")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        favVM.getAllList()
+        search(binding.searchEditText.text.toString().replace(",", ""))
     }
 
 }

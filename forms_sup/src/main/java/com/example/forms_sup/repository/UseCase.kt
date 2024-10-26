@@ -18,7 +18,6 @@ class UseCase @Inject constructor(){
 
     private val SUPABASE_NAME_KEY = "Forms"
 
-    private val converter = Mapper()
 
     private val supabase = createSupabaseClient(
         supabaseUrl = "https://qcixwatrekwteykhfpcy.supabase.co",
@@ -28,28 +27,18 @@ class UseCase @Inject constructor(){
     }
 
     suspend fun addForm(title: String, description: String, tags: List<String>, location: String?, author: String?, author_avatar: String?, author_login: String): Boolean{
-        supabase.from(SUPABASE_NAME_KEY).insert(FormDto(title, description, tags, location, author, author_avatar, author_login))
-
-        Log.d(TAG, "STARTING RESULT")
-        val result = supabase.from(SUPABASE_NAME_KEY).select{
-            filter {
-                and{
-                    eq("title", title)
-                    eq("description", description)
-                    if(location != null){
-                        eq("location", location)
-                    }
-                    eq("author_login", author_login)
-                }
-            }
-        }.decodeList<FormDto>()
-
-        return result.isNotEmpty()
+        return try {
+            supabase.from(SUPABASE_NAME_KEY).insert(
+                FormDto(null ,title, description, tags, location, author, author_avatar, author_login)
+            )
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
-    suspend fun allForms(): List<Form>{
-        val result = supabase.from(SUPABASE_NAME_KEY).select().decodeList<FormDto>()
-        return converter.FromDtoToForm(result)
+    suspend fun allForms(): List<FormDto>{
+        return supabase.from(SUPABASE_NAME_KEY).select().decodeList<FormDto>()
     }
 
     suspend fun getFormsByText(wordsToFind: String, tags: List<String>): List<FormDto> {
@@ -130,6 +119,16 @@ class UseCase @Inject constructor(){
         supabase.from(SUPABASE_NAME_KEY).update(
             {
                 set("author", author)
+            }
+        ) {
+            filter {
+                eq("author_login", login)
+                neq("author", login)
+            }
+        }
+
+        supabase.from(SUPABASE_NAME_KEY).update(
+            {
                 set("author_avatar", author_avatar)
             }
         ) {
@@ -137,5 +136,51 @@ class UseCase @Inject constructor(){
                 eq("author_login", login)
             }
         }
+    }
+
+    suspend fun editForm(id: Int, title: String, description: String, tags: List<String>, location: String?, author: String?): Boolean{
+        try {
+            supabase.from(SUPABASE_NAME_KEY).update(
+                {
+                    set("title", title)
+                    set("description", description)
+                    set("tags", tags)
+                    set("location", location)
+                    set("author", author)
+                }
+            ){
+              filter {
+                    eq("id", id)
+                }
+            }
+            return true
+        }catch (e: Exception){
+            return false
+        }
+    }
+
+    suspend fun deleteForm(id: Int): Boolean{
+        return try {
+            supabase.from(SUPABASE_NAME_KEY).delete{
+                filter {
+                    eq("id", id)
+                }
+            }
+            true
+        }catch (e: Exception){
+            false
+        }
+    }
+
+    suspend fun getFavourites(ids: List<Int>): List<FormDto>{
+        return supabase.from(SUPABASE_NAME_KEY).select{
+            filter {
+                or{
+                    ids.forEach { id ->
+                        eq("id", id)
+                    }
+                }
+            }
+        }.decodeAs<List<FormDto>>()
     }
 }

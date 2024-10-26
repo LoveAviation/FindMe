@@ -3,6 +3,8 @@ package com.example.findme.presentation.forms
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.InputType
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -119,16 +121,16 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
         }
 
         binding.saveButton.setOnClickListener{
-            if(binding.titleEditText.text!!.isNotEmpty() && binding.descriptionEditText.text!!.isNotEmpty()){
-                viewModel.addForm(this, binding.titleEditText.text.toString(),
-                    binding.descriptionEditText.text.toString(),
+            if(binding.titleEditText.text!!.trim().isNotEmpty() && binding.descriptionEditText.text!!.trim().isNotEmpty()){
+                viewModel.addForm(this, binding.titleEditText.text.toString().trim(),
+                    binding.descriptionEditText.text.toString().trim(),
                     tagList.toList(), longitude.toString(), latitude.toString(),
                     author, accAvatar, accLogin)
                 viewModel.formAddingResult.observe(this){ result ->
                     if(result == true){
                         finish()
                     }else if(result == false){
-                        Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
                     }
                 }
             }else{
@@ -139,14 +141,16 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
 
     private fun showInputDialog() {
         val input = EditText(this)
+        input.filters = arrayOf(InputFilter.LengthFilter(30))
+        input.inputType = InputType.TYPE_CLASS_TEXT
 
         val dialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.add_tag))
             .setMessage(getString(R.string.please_write_tag))
             .setView(input)
             .setPositiveButton(getString(R.string.ok)) { dialog, which ->
-                val result = input.text.toString()
-                if(result.isNotEmpty()){
+                val result = input.text.toString().trim().lowercase().replace(" ", "_")
+                if (result.isNotEmpty()) {
                     tagList.add(result)
                     binding.tagsRV.adapter = TagsAdapter(tagList, this)
                     updateUI()

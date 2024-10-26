@@ -8,6 +8,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <queries>
+
+        <!-- Google Maps -->
+        <package android:name="com.google.android.apps.maps" />
+        <!-- Yandex Maps -->
+        <package android:name="ru.yandex.yandexmaps" />
+    </queries>
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -19,6 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FindMe"
         tools:targetApi="31">
+        <activity
+            android:name=".presentation.forms.EditForm"
+            android:exported="false" />
         <activity
             android:name=".presentation.forms.FormActivity"
             android:exported="false" />

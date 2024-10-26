@@ -3,7 +3,7 @@ package com.example.findme.presentation
 import jakarta.inject.Inject
 
 
-class SaveDataVM @Inject constructor() {
+class SaveDataClass @Inject constructor() {
     var accLogin: String? = null
     var accPassword: String? = null
     var accName: String? = null

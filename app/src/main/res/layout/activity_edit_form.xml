@@ -19,7 +19,7 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:title="@string/create_activity_title"
+            app:title="@string/edit_form"
             app:titleTextAppearance="@style/ToolBarStyle"
             app:buttonGravity="center_vertical"
             android:paddingVertical="5dp"
@@ -34,13 +34,6 @@
             android:scaleType="centerCrop"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"/>
-        <TextView
-            android:id="@+id/avatar_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/your_avatar_that_will_be_on_form"
-            android:textColor="@color/gray"
-            android:layout_gravity="center"/>
 
         <TextView
             android:id="@+id/author"
@@ -72,9 +65,9 @@
                 android:id="@+id/title_editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
                 android:hint="@string/title_text"
-                android:maxLength="50" />
+                android:maxLines="1"
+                android:maxLength="50"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/description_textInpLayout"
@@ -100,15 +93,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="13dp">
-
             <Button
                 android:id="@+id/addTagButton"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:text="@string/add_tag"
                 app:layout_constraintEnd_toStartOf="@id/clearTagsButton"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/add_tag_to_find"/>
 
             <Button
                 android:id="@+id/clearTagsButton"
@@ -143,7 +135,7 @@
                 app:layout_constraintEnd_toStartOf="@id/clearLocationButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:text="@string/add_location"/>
+                android:text="@string/change_location"/>
 
             <Button
                 android:id="@+id/clearLocationButton"
@@ -162,7 +154,15 @@
                 app:layout_constraintTop_toBottomOf="@id/addLocationButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ProgressBar
+            android:id="@+id/loadingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/save_button"
@@ -170,9 +170,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:text="@string/create_btn_text"
+            android:text="@string/save_form"
             android:paddingHorizontal="30dp"
-            android:backgroundTint="@color/selected"
+            android:textSize="24sp"/>
+
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="@string/delete_form"
+            android:paddingHorizontal="30dp"
             android:textSize="24sp"/>
     </LinearLayout>
 

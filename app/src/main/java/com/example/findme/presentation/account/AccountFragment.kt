@@ -2,9 +2,11 @@ package com.example.findme.presentation.account
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +17,10 @@ import com.bumptech.glide.Glide
 import com.example.findme.R
 import com.example.findme.databinding.FragmentAccountBinding
 import com.example.findme.other.OnDataClearListener
+import com.example.findme.presentation.FavouritesVM
 import com.example.findme.presentation.MainActivity
+import com.example.findme.presentation.forms.EditForm
+import com.example.findme.presentation.forms.FormActivity
 import com.example.findme.presentation.forms.FormsVM
 import com.example.findme.presentation.forms.adapter.FormsAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,9 +38,12 @@ class AccountFragment : Fragment() {
     private val binding get() = _binding
     private val viewModel : FormsVM by viewModels()
 
+    private val favVM : FavouritesVM by viewModels()
+
     private var dataClearListener: OnDataClearListener? = null
 
-    private var isExpanded = false
+    private var myIsExpanded = false
+    private var favIsExpanded = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -67,6 +75,40 @@ class AccountFragment : Fragment() {
         binding.accountName.text = "$accName $accSurname"
         binding.accountLogin.text = accLogin
 
+        favVM.getAllList()
+        favVM.favForms.observe(viewLifecycleOwner){ result ->
+            if(result != null){
+                viewModel.favouriteForms(result)
+            }
+        }
+
+        binding.favouriteFormsRV.layoutManager = LinearLayoutManager(requireContext())
+        viewModel.favouriteForms.observe(viewLifecycleOwner){ result ->
+            binding.favouriteFormsRV.adapter = FormsAdapter(result){ selectedItem ->
+                val intent = Intent(requireContext(), FormActivity::class.java)
+                intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
+                intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
+                intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
+                intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
+                intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
+                intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
+                intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
+
+                intent.putExtra(FormActivity.KEY_FAVOURITE, true)
+                startActivity(intent)
+            }
+        }
+
+        binding.favouriteForms.setOnClickListener{
+            if(favIsExpanded){
+                binding.favouriteFormsRV.visibility = View.GONE
+                favIsExpanded = false
+            }else{
+                binding.favouriteFormsRV.visibility = View.VISIBLE
+                favIsExpanded = true
+            }
+        }
+
         if (accAvatar != "" && accAvatar != "null"){
             Glide.with(this)
                 .load(accAvatar)
@@ -80,17 +122,30 @@ class AccountFragment : Fragment() {
 
         viewModel.getAccountForms(accLogin.toString())
         viewModel.forms.observe(viewLifecycleOwner){ forms ->
-            binding.myFormsRV.adapter = FormsAdapter(forms){}
+            binding.myFormsRV.adapter = FormsAdapter(forms){ selectedItem ->
+                val intent = Intent(requireContext(), EditForm::class.java)
+                intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
+                intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
+                intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
+                intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
+                intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
+                intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
+                intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
+                intent.putExtra(FormActivity.KEY_LOGIN, selectedItem.author_login)
+                intent.putExtra(MainActivity.KEY_NAME, accName)
+                intent.putExtra(MainActivity.KEY_SURNAME, accSurname)
+                startActivity(intent)
+            }
         }
         binding.myFormsRV.layoutManager = LinearLayoutManager(requireContext())
 
         binding.myForms.setOnClickListener{
-            if(isExpanded){
+            if(myIsExpanded){
                 binding.myFormsRV.visibility = View.GONE
-                isExpanded = false
+                myIsExpanded = false
             }else{
                 binding.myFormsRV.visibility = View.VISIBLE
-                isExpanded = true
+                myIsExpanded = true
             }
         }
 
@@ -120,4 +175,14 @@ class AccountFragment : Fragment() {
         alertDialog.show()
     }
 
+    private fun listFormToBasic(input: List<String>): String{
+        if (input.isEmpty()) return ""
+        return input.joinToString(" ")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getAccountForms(accLogin.toString())
+        favVM.getAllList()
+    }
 }

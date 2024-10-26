@@ -1,13 +1,15 @@
 package com.example.findme.presentation
 
 
-import android.content.Context
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PorterDuff.Mode
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.findme.R
@@ -15,8 +17,8 @@ import com.example.findme.databinding.ActivityMainBinding
 import com.example.findme.other.OnDataClearListener
 import com.example.findme.presentation.account.RegistrationActivity
 import com.example.findme.presentation.forms.CreateFormActivity
-import com.example.findme.presentation.forms.FormsVM
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnDataClearListener {
@@ -26,7 +28,9 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
     private lateinit var sharePrefEditor: SharedPreferences.Editor
     private lateinit var navHostFragment : NavHostFragment
     private lateinit var navController : NavController
-    private val accData  = SaveDataVM()
+    private val accData  = SaveDataClass()
+
+    private val viewModel : FavouritesVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,24 +48,29 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
         accData.accSurname = intent?.getStringExtra(KEY_SURNAME) ?:  sharPref.getString(KEY_SURNAME, null)
         accData.accAvatar = intent?.getStringExtra(KEY_AVATAR) ?:  sharPref.getString(KEY_AVATAR, null)
         btnSelected = sharPref.getInt(KEY, 1)
-        chooseBotBar(btnSelected, this)
+        chooseBotBar(btnSelected)
 
-        binding.searchButton.setOnClickListener{ chooseBotBar(1, this) }
+        binding.searchButton.setOnClickListener{ chooseBotBar(1) }
         binding.createButton.setOnClickListener {
-            var intent = Intent(this, CreateFormActivity::class.java).apply {
-                putExtra(KEY_LOGIN, accData.accLogin)
-                putExtra(KEY_NAME, accData.accName)
-                putExtra(KEY_SURNAME, accData.accSurname)
-                putExtra(KEY_AVATAR, accData.accAvatar)
+            if(accData.accName == null && accData.accSurname == null){
+                startActivity(Intent(this, RegistrationActivity::class.java))
+            }else{
+                var intent = Intent(this, CreateFormActivity::class.java).apply {
+                    putExtra(KEY_LOGIN, accData.accLogin)
+                    putExtra(KEY_NAME, accData.accName)
+                    putExtra(KEY_SURNAME, accData.accSurname)
+                    putExtra(KEY_AVATAR, accData.accAvatar)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
         binding.accountButton.setOnClickListener{
-            chooseBotBar(3, this)
+            chooseBotBar(3)
         }
+
     }
 
-    private fun chooseBotBar(fragment: Int, context: Context) {
+    private fun chooseBotBar(fragment: Int) {
         with(binding) {
             when (fragment) {
                 1 -> {
@@ -77,7 +86,7 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
 
                 3 -> {
                     if(accData.accName == null && accData.accSurname == null){
-                        startActivity(Intent(context, RegistrationActivity::class.java))
+                        startActivity(Intent(this@MainActivity, RegistrationActivity::class.java))
                     }else {
                         searchButton.colorFilter = null
                         searchButton.isEnabled = true
@@ -102,7 +111,7 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
 
     override fun clearUserData() {
         accData.clearAll()
-        chooseBotBar(1, this)
+        chooseBotBar(1)
     }
 
 

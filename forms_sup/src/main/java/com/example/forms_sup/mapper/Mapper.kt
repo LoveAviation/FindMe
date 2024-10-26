@@ -24,6 +24,7 @@ class Mapper @Inject constructor(){
 
     private fun DtoToForm(input: FormDto): Form {
         return Form(
+            id = input.id,
             title = input.title,
             description = input.description,
             tags = input.tags,

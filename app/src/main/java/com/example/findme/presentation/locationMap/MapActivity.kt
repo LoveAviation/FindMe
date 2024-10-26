@@ -2,7 +2,6 @@ package com.example.findme.presentation.locationMap
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -128,10 +127,8 @@ class MapActivity : AppCompatActivity() {
                 ContextCompat.checkSelfPermission(
                     this,
                     permission
-                ) == PackageManager.PERMISSION_GRANTED
+                ) != PackageManager.PERMISSION_GRANTED
             }) {
-            startLocation()
-        } else {
             launcher.launch(REQUIRED_PERMISSION)
         }
     }

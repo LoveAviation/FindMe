@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 @SuppressLint("UnsafeOptInUsageError")
 @Serializable
 data class FormDto(
+    @SerialName("id")
+    val id: Int? = null,
     @SerialName("title")
     val title: String,
     @SerialName("description")

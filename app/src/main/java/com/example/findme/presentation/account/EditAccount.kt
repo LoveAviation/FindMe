@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,8 +14,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.account_fb.entity.Account
+import com.example.account_fb.other.ErrorStates
 import com.example.findme.databinding.ActivityEditAccountBinding
 import com.example.findme.presentation.MainActivity
 import com.example.findme.presentation.MainActivity.Companion.KEY_AVATAR
@@ -79,6 +82,7 @@ class EditAccount : AppCompatActivity() {
             imagePickerLauncher.launch(intent)
         }
 
+
         binding.submitButton.setOnClickListener{
             if (inputIsValid()) {
                 var nameHere : String = ""
@@ -90,24 +94,26 @@ class EditAccount : AppCompatActivity() {
                     surnameHere = if (surnameEditText.text!!.isNotEmpty()) { surnameEditText.text.toString() } else { surname }
                     passwordHere = if (passwordEditText.text!!.isNotEmpty()) { passwordEditText.text.toString() } else { password }
                 }
-                if(localURI != null || avatarIsChanged){
-                    viewModel.edit(this, login, nameHere, surnameHere, passwordHere, localURI)
+
+                if(avatarIsChanged || avatar == ""){
+                    startLoading()
+                    viewModel.edit(this, login, nameHere, surnameHere, passwordHere, localURI.toString())
                 }else{
-                    viewModel.edit(this, login, nameHere, surnameHere, passwordHere, null)
+                    startLoading()
+                    viewModel.edit(this, login, nameHere, surnameHere, passwordHere, avatar)
                 }
 
                 viewModel.editState.observe(this){ avatarResult ->
                     if(avatarResult == "null"){
-                        updateAccInfoInSupa(avatar)
                         returnData(login, Account(passwordHere, nameHere, surnameHere, avatar))
                     }else{
-                        updateAccInfoInSupa(avatarResult)
                         returnData(login, Account(passwordHere, nameHere, surnameHere, avatarResult))
                     }
                 }
 
             }else{
-                Toast.makeText(this, "Invalid input", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Invalid input", Toast.LENGTH_SHORT).show()
+                stopLoading()
             }
         }
 
@@ -153,6 +159,7 @@ class EditAccount : AppCompatActivity() {
 
 
     private fun returnData(login: String, account: Account){
+        updateAccInfoInSupa(account.urlAvatar)
         startActivity(Intent(this, MainActivity::class.java).apply {
             putExtra(KEY_LOGIN, login)
             putExtra(KEY_PASSWORD, account.password)
@@ -184,6 +191,17 @@ class EditAccount : AppCompatActivity() {
             newAvatar = author_avatar
         }
         supabaseViewModel.updateAccInfo(login, "$newName $newSurname", newAvatar)
+    }
+
+    private fun startLoading(){
+        binding.submitButton.isEnabled = false
+        binding.loadingBar.visibility = View.VISIBLE
+        binding.clearButton.isEnabled = false
+    }
+
+    private fun stopLoading() {
+        binding.submitButton.isEnabled = true
+        binding.loadingBar.visibility = View.GONE
     }
 
     companion object {

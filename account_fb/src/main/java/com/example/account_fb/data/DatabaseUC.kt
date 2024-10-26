@@ -93,7 +93,6 @@ class DatabaseUC @Inject constructor(){
                     }else{
                         _editResult.value = "SUCCESS"
                     }
-                    Log.d(TAG, "${_editResult.value}")
                 }.addOnFailureListener{ _errorDatabase.value = ErrorStates.ERROR }
             }.addOnFailureListener{ _errorDatabase.value = ErrorStates.ERROR }
         }.addOnFailureListener{ _errorDatabase.value = ErrorStates.ERROR }

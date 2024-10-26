@@ -1,7 +1,5 @@
 package com.example.findme.presentation.forms
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -67,6 +65,33 @@ class FormsVM @Inject constructor(
     fun updateAccInfo(login: String, author: String, author_avatar: String?){
         viewModelScope.launch{
             formsRep.updateAccInfo(login, author, author_avatar)
+        }
+    }
+
+    private val _formEditingResult = MutableLiveData<Boolean?>(null)
+    val formEditingResult: LiveData<Boolean?> get() = _formEditingResult
+
+    fun editForm(id: Int, title: String, description: String, tags: List<String>, longitude: String?, latitude: String?, author: String?){
+        viewModelScope.launch{
+            _formEditingResult.value = formsRep.editForm(id, title, description, tags, longitude, latitude, author)
+        }
+    }
+
+    private val _formDeletingResult = MutableLiveData<Boolean?>(null)
+    val formDeletingResult: LiveData<Boolean?> get() = _formDeletingResult
+
+    fun deleteForm(id: Int){
+        viewModelScope.launch{
+            _formEditingResult.value = formsRep.deleteForm(id)
+        }
+    }
+
+    private var _favouriteForms = MutableLiveData<List<Form>>()
+    val favouriteForms: LiveData<List<Form>> get() = _favouriteForms
+
+    fun favouriteForms(ids: List<Int>){
+        viewModelScope.launch{
+            _favouriteForms.value = formsRep.getFavourites(ids)
         }
     }
 }
