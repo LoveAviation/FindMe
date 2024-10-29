@@ -1,5 +1,8 @@
 package com.example.findme.presentation.forms
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,84 +17,115 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FormsVM @Inject constructor(
-    private val formsRep : FormsRepository
+    private val formsRep : FormsRepository,
 ): ViewModel(){
 
-    private var _forms = MutableLiveData<List<Form>>()
-    val forms: LiveData<List<Form>> get() = _forms
+    private var _forms = MutableLiveData<List<Form>?>()
+    val forms: LiveData<List<Form>?> get() = _forms
 
     private val _formAddingResult = MutableLiveData<Boolean?>(null)
     val formAddingResult: LiveData<Boolean?> get() = _formAddingResult
 
-    fun getAllForms(){
-        viewModelScope.launch {
-            _forms.value = formsRep.getAllForms()
+    fun getAllForms(context: Context){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                _forms.value = formsRep.getAllForms()
+            }
         }
     }
 
-    fun getByText(wordsToFind: String, tags: List<String>){
-        viewModelScope.launch{
-            _forms.value = formsRep.getByText(wordsToFind, tags)
+    fun getByText(context: Context, wordsToFind: String, tags: List<String>){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                _forms.value = formsRep.getByText(wordsToFind, tags)
+            }
         }
     }
 
-    fun getWithCoordinates(wordsToFind: String, tags: List<String>, longitude: String, latitude: String, radius: String){
-        viewModelScope.launch{
-            val formsByText = async {formsRep.getByText(wordsToFind, tags)}.await()
-            val formsByCoordinates = async {formsRep.getByCoordinates(longitude, latitude, radius)}.await()
-            
-            _forms.value = formsByText.intersect(formsByCoordinates).toList()
+    fun getWithCoordinates(context: Context, wordsToFind: String, tags: List<String>, longitude: String, latitude: String, radius: String){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                val formsByText = async { formsRep.getByText(wordsToFind, tags) }.await()
+                val formsByCoordinates =
+                    async { formsRep.getByCoordinates(longitude, latitude, radius) }.await()
+
+                _forms.value = formsByText.intersect(formsByCoordinates).toList()
+            }
         }
     }
 
-    fun addForm(lifecycleOwner: LifecycleOwner,title: String, description: String, tags: List<String>, longitude: String, latitude: String, author: String, author_avatar: String?, author_login: String){
-        viewModelScope.launch{
-            var avatar = author_avatar
-            if(author_avatar.isNullOrEmpty()) avatar = null
-            formsRep.addForm(title, description, tags, longitude, latitude, author, avatar, author_login)
-            formsRep.formInsertionResult.observe(lifecycleOwner){ result ->
-                if(result != null){
-                    _formAddingResult.value = result
+    fun addForm(context: Context, lifecycleOwner: LifecycleOwner, title: String, description: String, tags: List<String>, longitude: String, latitude: String, author: String, author_avatar: String?, author_login: String){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                var avatar = author_avatar
+                if (author_avatar.isNullOrEmpty()) avatar = null
+                formsRep.addForm(title, description, tags, longitude, latitude, author, avatar, author_login
+                )
+                formsRep.formInsertionResult.observe(lifecycleOwner) { result ->
+                    if (result != null) {
+                        _formAddingResult.value = result
+                    }
                 }
             }
         }
     }
-    fun getAccountForms(login: String){
-        viewModelScope.launch{
-            _forms.value = formsRep.myForms(login)
+    fun getAccountForms(context: Context, login: String){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                _forms.value = formsRep.myForms(login)
+            }
         }
     }
 
-    fun updateAccInfo(login: String, author: String, author_avatar: String?){
-        viewModelScope.launch{
-            formsRep.updateAccInfo(login, author, author_avatar)
+    fun updateAccInfo(context: Context, login: String, author: String, author_avatar: String?){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                formsRep.updateAccInfo(login, author, author_avatar)
+            }
         }
     }
 
     private val _formEditingResult = MutableLiveData<Boolean?>(null)
     val formEditingResult: LiveData<Boolean?> get() = _formEditingResult
 
-    fun editForm(id: Int, title: String, description: String, tags: List<String>, longitude: String?, latitude: String?, author: String?){
-        viewModelScope.launch{
-            _formEditingResult.value = formsRep.editForm(id, title, description, tags, longitude, latitude, author)
+    fun editForm(context: Context, id: Int, title: String, description: String, tags: List<String>, longitude: String?, latitude: String?, author: String?){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                _formEditingResult.value =
+                    formsRep.editForm(id, title, description, tags, longitude, latitude, author)
+            }
         }
     }
 
     private val _formDeletingResult = MutableLiveData<Boolean?>(null)
     val formDeletingResult: LiveData<Boolean?> get() = _formDeletingResult
 
-    fun deleteForm(id: Int){
-        viewModelScope.launch{
-            _formEditingResult.value = formsRep.deleteForm(id)
+    fun deleteForm(context: Context, id: Int){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                _formEditingResult.value = formsRep.deleteForm(id)
+            }
         }
     }
 
-    private var _favouriteForms = MutableLiveData<List<Form>>()
-    val favouriteForms: LiveData<List<Form>> get() = _favouriteForms
+    private var _favouriteForms = MutableLiveData<List<Form>?>()
+    val favouriteForms: LiveData<List<Form>?> get() = _favouriteForms
 
-    fun favouriteForms(ids: List<Int>){
-        viewModelScope.launch{
-            _favouriteForms.value = formsRep.getFavourites(ids)
+    fun favouriteForms(context: Context, ids: List<Int>){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                _favouriteForms.value = formsRep.getFavourites(ids)
+            }
         }
+    }
+
+    private fun isInternetAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        val network = connectivityManager?.activeNetwork
+        val networkCapabilities = connectivityManager?.getNetworkCapabilities(network)
+        return networkCapabilities != null &&
+                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
     }
 }

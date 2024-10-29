@@ -3,8 +3,10 @@ package com.example.findme.presentation.forms
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -21,6 +23,11 @@ import com.example.findme.presentation.forms.adapter.TagsAdapter
 import com.example.findme.presentation.locationMap.MapActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListener  {
@@ -90,6 +97,18 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
             }
         }
 
+        binding.titleEditText.afterChangeWithDebounce{ input ->
+            if(input.length < 3){
+                binding.titleEditText.error = "Title can not have less then 3 symbols"
+            }
+        }
+
+        binding.descriptionEditText.afterChangeWithDebounce{ input ->
+            if(input.length < 3){
+                binding.descriptionEditText.error = "Description can not have less then 3 symbols"
+            }
+        }
+
         binding.toolbar.setNavigationOnClickListener{
             finish()
         }
@@ -121,8 +140,11 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
         }
 
         binding.saveButton.setOnClickListener{
-            if(binding.titleEditText.text!!.trim().isNotEmpty() && binding.descriptionEditText.text!!.trim().isNotEmpty()){
-                viewModel.addForm(this, binding.titleEditText.text.toString().trim(),
+            if(binding.titleEditText.text!!.trim().isNotEmpty()
+                && binding.titleEditText.text!!.trim().length >= 3
+                && binding.descriptionEditText.text!!.trim().isNotEmpty()
+                && binding.descriptionEditText.text!!.trim().length >= 3){
+                viewModel.addForm(this, this, binding.titleEditText.text.toString().trim(),
                     binding.descriptionEditText.text.toString().trim(),
                     tagList.toList(), longitude.toString(), latitude.toString(),
                     author, accAvatar, accLogin)
@@ -134,9 +156,30 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
                     }
                 }
             }else{
-                Snackbar.make(binding.root, "Please fill in title and description", Snackbar.LENGTH_LONG).show()
+                if(binding.titleEditText.text!!.trim().isEmpty()){
+                    binding.titleEditText.error = "Please fill in title"
+                }
+                if(binding.descriptionEditText.text!!.trim().isEmpty()){
+                    binding.descriptionEditText.error = "Please fill in description"
+                }
             }
         }
+    }
+
+    private fun EditText.afterChangeWithDebounce(debounceTime: Long = 500L, onDebouncedInput: (String) -> Unit) {
+        var debounceJob: Job? = null
+
+        this.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                debounceJob?.cancel()
+                debounceJob = CoroutineScope(Dispatchers.Main).launch {
+                    delay(debounceTime)
+                    s?.toString()?.let { onDebouncedInput(it) }
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
     private fun showInputDialog() {

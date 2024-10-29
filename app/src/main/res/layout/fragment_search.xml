@@ -16,7 +16,8 @@
         android:layout_marginHorizontal="13dp"
         android:hint="@string/search_forms"
         style="@style/TextInputLayoutRoundedBox"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:endIconMode="clear_text">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/search_editText"
@@ -25,6 +26,7 @@
             android:drawableStart="@android:drawable/ic_menu_search"
             android:imeOptions="actionDone"
             android:inputType="text"
+            android:maxLength="100"
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,10 +95,20 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/clearLocationButton"
             app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
             android:text="@string/add_location_to_sort"/>
+
+        <Button
+            android:id="@+id/clearLocationButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/addLocationButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
+            android:text="@string/clear_location"/>
 
         <TextView
             android:id="@+id/selected_coordinates"

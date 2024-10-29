@@ -5,6 +5,8 @@ import android.app.AlertDialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -77,25 +79,32 @@ class AccountFragment : Fragment() {
 
         favVM.getAllList()
         favVM.favForms.observe(viewLifecycleOwner){ result ->
-            if(result != null){
-                viewModel.favouriteForms(result)
+            Log.d(TAG, "RESULT IS NULL: ${result == null}; RESULT: $result")
+            if(result != null) {
+                if (result.isNotEmpty()) {
+                    viewModel.favouriteForms(requireContext(), result)
+                }else{
+                    binding.favouriteFormsRV.visibility = View.GONE
+                }
             }
         }
 
         binding.favouriteFormsRV.layoutManager = LinearLayoutManager(requireContext())
         viewModel.favouriteForms.observe(viewLifecycleOwner){ result ->
-            binding.favouriteFormsRV.adapter = FormsAdapter(result){ selectedItem ->
-                val intent = Intent(requireContext(), FormActivity::class.java)
-                intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
-                intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
-                intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
-                intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
-                intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
-                intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
-                intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
+            if (result != null) {
+                binding.favouriteFormsRV.adapter = FormsAdapter(result) { selectedItem ->
+                    val intent = Intent(requireContext(), FormActivity::class.java)
+                    intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
+                    intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
+                    intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
+                    intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
+                    intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
+                    intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
+                    intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
 
-                intent.putExtra(FormActivity.KEY_FAVOURITE, true)
-                startActivity(intent)
+                    intent.putExtra(FormActivity.KEY_FAVOURITE, true)
+                    startActivity(intent)
+                }
             }
         }
 
@@ -120,21 +129,23 @@ class AccountFragment : Fragment() {
             showAlertDialog()
         }
 
-        viewModel.getAccountForms(accLogin.toString())
+        viewModel.getAccountForms(requireContext(), accLogin.toString())
         viewModel.forms.observe(viewLifecycleOwner){ forms ->
-            binding.myFormsRV.adapter = FormsAdapter(forms){ selectedItem ->
-                val intent = Intent(requireContext(), EditForm::class.java)
-                intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
-                intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
-                intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
-                intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
-                intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
-                intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
-                intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
-                intent.putExtra(FormActivity.KEY_LOGIN, selectedItem.author_login)
-                intent.putExtra(MainActivity.KEY_NAME, accName)
-                intent.putExtra(MainActivity.KEY_SURNAME, accSurname)
-                startActivity(intent)
+            if (forms != null) {
+                binding.myFormsRV.adapter = FormsAdapter(forms) { selectedItem ->
+                    val intent = Intent(requireContext(), EditForm::class.java)
+                    intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
+                    intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
+                    intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
+                    intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
+                    intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
+                    intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
+                    intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
+                    intent.putExtra(FormActivity.KEY_LOGIN, selectedItem.author_login)
+                    intent.putExtra(MainActivity.KEY_NAME, accName)
+                    intent.putExtra(MainActivity.KEY_SURNAME, accSurname)
+                    startActivity(intent)
+                }
             }
         }
         binding.myFormsRV.layoutManager = LinearLayoutManager(requireContext())
@@ -165,6 +176,7 @@ class AccountFragment : Fragment() {
         builder.setTitle(getString(R.string.warning))
         builder.setMessage(getString(R.string.warning_message))
         builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            favVM.deleteAll()
             dataClearListener?.clearUserData()
             dialog.dismiss()
         }
@@ -182,7 +194,8 @@ class AccountFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getAccountForms(accLogin.toString())
+        Log.d(TAG, "ON RESUMEEEE")
+        viewModel.getAccountForms(requireContext(), accLogin.toString())
         favVM.getAllList()
     }
 }

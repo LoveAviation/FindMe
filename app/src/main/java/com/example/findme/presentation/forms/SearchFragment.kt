@@ -3,7 +3,10 @@ package com.example.findme.presentation.forms
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -12,12 +15,15 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.findme.R
 import com.example.findme.databinding.FragmentSearchBinding
@@ -25,7 +31,6 @@ import com.example.findme.presentation.FavouritesVM
 import com.example.findme.presentation.forms.adapter.FormsAdapter
 import com.example.findme.presentation.forms.adapter.TagsAdapter
 import com.example.findme.presentation.locationMap.MapActivity
-import com.example.forms_sup.entity.Form
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +69,7 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
             }else{
                 binding.selectedCoordinates.text = getString(R.string.you_haven_t_selected_coordinates)
             }
-            search(binding.searchEditText.text.toString())
+            search()
         }
     }
 
@@ -88,42 +93,43 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
         binding.searchResultView.layoutManager = LinearLayoutManager(requireContext())
         binding.tagsRV.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        viewModel.getAllForms()
+        viewModel.getAllForms(requireContext())
 
         viewModel.forms.observe(viewLifecycleOwner){ result ->
-            binding.loadingBar.visibility = View.GONE
-            if(result.isEmpty()) {
-                binding.nothingText.visibility = View.VISIBLE
-            }
+            if (result != null) {
+                binding.loadingBar.visibility = View.GONE
+                if (result.isEmpty()) {
+                    binding.nothingText.visibility = View.VISIBLE
+                }
 
-            binding.searchResultView.adapter = FormsAdapter(result) { selectedItem ->
-                var isFavourite = false
-                if (favouritesList != null) {
-                    for(id: Int in favouritesList){
-                        if(id == selectedItem.id){
-                            isFavourite = true
-                            break
+                binding.searchResultView.adapter = FormsAdapter(result) { selectedItem ->
+                    var isFavourite = false
+                    if (favouritesList != null) {
+                        for (id: Int in favouritesList) {
+                            if (id == selectedItem.id) {
+                                isFavourite = true
+                                break
+                            }
                         }
                     }
-                }
-                Log.d(TAG, isFavourite.toString()
-                )
-                val intent = Intent(requireContext(), FormActivity::class.java)
-                intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
-                intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
-                intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
-                intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
-                intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
-                intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
-                intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
+                    val intent = Intent(requireContext(), FormActivity::class.java)
+                    intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
+                    intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
+                    intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
+                    intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
+                    intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
+                    intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
+                    intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
 
-                intent.putExtra(FormActivity.KEY_FAVOURITE, isFavourite)
-                startActivity(intent)
+                    intent.putExtra(FormActivity.KEY_FAVOURITE, isFavourite)
+                    startActivity(intent)
+                }
             }
         }
 
-        binding.searchEditText.afterChangeWithDebounce { string ->
-            search(string.replace(",", ""))
+
+        binding.searchEditText.afterChangeWithDebounce {
+            search()
         }
 
         binding.filtersButton.setOnClickListener{
@@ -140,14 +146,22 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
             updateUI()
         }
 
+        binding.clearLocationButton.setOnClickListener{
+            longitude = null
+            latitude = null
+            binding.selectedCoordinates.text = getString(R.string.you_haven_t_selected_coordinates)
+            search()
+        }
+
         binding.addLocationButton.setOnClickListener{
             mapResultLauncher.launch(Intent(requireContext(), MapActivity::class.java))
         }
 
         binding.locationFilterSwitch.setOnCheckedChangeListener{ _, isActivated ->
-            search(binding.searchEditText.text.toString())
+            search()
 
             binding.addLocationButton.visibility = if(isActivated) View.VISIBLE else View.GONE
+            binding.clearLocationButton.visibility = if(isActivated) View.VISIBLE else View.GONE
             binding.selectedCoordinates.visibility = if(isActivated) View.VISIBLE else View.GONE
         }
 
@@ -159,7 +173,7 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
         isExpanded = !isExpanded
     }
 
-    fun EditText.afterChangeWithDebounce(debounceTime: Long = 500L, onDebouncedInput: (String) -> Unit) {
+    private fun EditText.afterChangeWithDebounce(debounceTime: Long = 500L, onDebouncedInput: (String) -> Unit) {
         var debounceJob: Job? = null
 
         this.addTextChangedListener(object : TextWatcher {
@@ -212,20 +226,37 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
         }else{
             binding.tagsRV.visibility = View.GONE
         }
-        search(binding.searchEditText.text.toString())
+        search()
     }
 
-    private fun search(input: String?) {
-        binding.nothingText.visibility = View.GONE
-        binding.loadingBar.visibility = View.VISIBLE
-        if(input!!.isNotEmpty() || tagList.isNotEmpty() || (longitude != null && latitude != null)){
-            if(binding.locationFilterSwitch.isChecked){
-                viewModel.getWithCoordinates(binding.searchEditText.text.toString(), tagList, longitude.toString(), latitude.toString(), "200000")
-            }else{
-                viewModel.getByText(binding.searchEditText.text.toString(), tagList)
+    private fun search() {
+        val input = binding.searchEditText.text.toString().replace(",", "")
+        if (isInternetAvailable()) {
+            binding.nothingText.text = getString(R.string.nothing_was_found_for_your_request)
+            binding.searchEditText.isEnabled = true
+            binding.filtersButton.isEnabled = true
+            binding.nothingText.visibility = View.GONE
+            binding.loadingBar.visibility = View.VISIBLE
+            if (input.isNotEmpty() || tagList.isNotEmpty() || (longitude != null && latitude != null)) {
+                if (binding.locationFilterSwitch.isChecked && longitude != null && latitude != null) {
+                    viewModel.getWithCoordinates(requireContext(), binding.searchEditText.text.toString(), tagList, longitude.toString(), latitude.toString(), "200000")
+                } else {
+                    viewModel.getByText(requireContext(),binding.searchEditText.text.toString(), tagList)
+                }
+            } else {
+                viewModel.getAllForms(requireContext())
             }
         }else{
-            viewModel.getAllForms()
+            binding.loadingBar.visibility = View.GONE
+            binding.nothingText.text = "NO INTERNET CONNECTION"
+            binding.nothingText.visibility = View.VISIBLE
+            binding.searchEditText.isEnabled = false
+            binding.filtersButton.isEnabled = false
+            binding.searchResultView.adapter = FormsAdapter(listOf()){}
+            viewModel.viewModelScope.launch{
+                delay(1500)
+                search()
+            }
         }
     }
 
@@ -237,7 +268,16 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
     override fun onResume() {
         super.onResume()
         favVM.getAllList()
-        search(binding.searchEditText.text.toString().replace(",", ""))
+        search()
     }
 
+    private fun isInternetAvailable(): Boolean {
+        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        val network = connectivityManager?.activeNetwork
+        val networkCapabilities = connectivityManager?.getNetworkCapabilities(network)
+        return networkCapabilities != null &&
+                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+    }
 }

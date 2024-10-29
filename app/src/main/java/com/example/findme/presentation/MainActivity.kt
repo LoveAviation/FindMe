@@ -2,9 +2,12 @@ package com.example.findme.presentation
 
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PorterDuff.Mode
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -17,6 +20,7 @@ import com.example.findme.databinding.ActivityMainBinding
 import com.example.findme.other.OnDataClearListener
 import com.example.findme.presentation.account.RegistrationActivity
 import com.example.findme.presentation.forms.CreateFormActivity
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -53,7 +57,7 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
         binding.searchButton.setOnClickListener{ chooseBotBar(1) }
         binding.createButton.setOnClickListener {
             if(accData.accName == null && accData.accSurname == null){
-                startActivity(Intent(this, RegistrationActivity::class.java))
+                goToRegistration()
             }else{
                 var intent = Intent(this, CreateFormActivity::class.java).apply {
                     putExtra(KEY_LOGIN, accData.accLogin)
@@ -86,7 +90,7 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
 
                 3 -> {
                     if(accData.accName == null && accData.accSurname == null){
-                        startActivity(Intent(this@MainActivity, RegistrationActivity::class.java))
+                        goToRegistration()
                     }else {
                         searchButton.colorFilter = null
                         searchButton.isEnabled = true
@@ -109,6 +113,14 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
         }
     }
 
+    private fun goToRegistration(){
+        if(isInternetAvailable()){
+            startActivity(Intent(this, RegistrationActivity::class.java))
+        }else{
+            Snackbar.make(binding.root, "NO INTERNET CONNECTION", Snackbar.LENGTH_LONG).show()
+        }
+    }
+
     override fun clearUserData() {
         accData.clearAll()
         chooseBotBar(1)
@@ -124,6 +136,16 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
             .putString(KEY_SURNAME, accData.accSurname)
             .putString(KEY_AVATAR, accData.accAvatar)
             .apply()
+    }
+
+    private fun isInternetAvailable(): Boolean {
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager?
+        val network = connectivityManager?.activeNetwork
+        val networkCapabilities = connectivityManager?.getNetworkCapabilities(network)
+        return networkCapabilities != null &&
+                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
     }
 
     companion object{

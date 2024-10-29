@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
@@ -114,6 +115,15 @@ class MapActivity : AppCompatActivity() {
         checkPermissions()
     }
 
+    override fun onResume() {
+        super.onResume()
+            val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+           if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+               stopLoading()
+           }
+    }
+
     fun isLocationEnabled(): Boolean {
         return Settings.Secure.getInt(
             this.contentResolver,
@@ -135,7 +145,6 @@ class MapActivity : AppCompatActivity() {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
-
             latitude = result.lastLocation!!.latitude
             longitude = result.lastLocation!!.longitude
 

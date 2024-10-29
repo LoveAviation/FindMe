@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavouritesVM @Inject constructor( private val useCase: FavouritesUseCase): ViewModel() {
+class FavouritesVM @Inject constructor(private val useCase: FavouritesUseCase): ViewModel() {
 
     private var _favForms = MutableLiveData<List<Int>?>(null)
     val favForms: LiveData<List<Int>?> get() = _favForms
@@ -32,6 +32,12 @@ class FavouritesVM @Inject constructor( private val useCase: FavouritesUseCase):
     fun deleteFavourite(id: Int){
         viewModelScope.launch(Dispatchers.IO){
             useCase.delete(id)
+        }
+    }
+
+    fun deleteAll(){
+        viewModelScope.launch(Dispatchers.IO){
+            useCase.deleteAll()
         }
     }
 

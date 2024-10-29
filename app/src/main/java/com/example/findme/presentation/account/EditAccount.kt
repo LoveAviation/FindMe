@@ -5,8 +5,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,6 +31,11 @@ import com.example.findme.presentation.MainActivity.Companion.KEY_SURNAME
 import com.example.findme.R
 import com.example.findme.presentation.forms.FormsVM
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class EditAccount : AppCompatActivity() {
@@ -82,6 +90,29 @@ class EditAccount : AppCompatActivity() {
             imagePickerLauncher.launch(intent)
         }
 
+        binding.passwordEditText.afterChangeWithDebounce{ input ->
+            if(input.length in 1..5){
+                binding.passwordEditText.error = "Password can not have less then 6 symbols"
+            }else{
+                binding.passwordEditText.error = null
+            }
+        }
+
+        binding.nameEditText.afterChangeWithDebounce{ input ->
+            if(input.length in 1..2){
+                binding.nameEditText.error = "Name can not have less then 3 symbols"
+            }else{
+                binding.passwordEditText.error = null
+            }
+        }
+
+        binding.surnameEditText.afterChangeWithDebounce{ input ->
+            if(input.length in 1..2){
+                binding.surnameEditText.error = "Surname can not have less then 3 symbols"
+            }else{
+                binding.passwordEditText.error = null
+            }
+        }
 
         binding.submitButton.setOnClickListener{
             if (inputIsValid()) {
@@ -95,10 +126,10 @@ class EditAccount : AppCompatActivity() {
                     passwordHere = if (passwordEditText.text!!.isNotEmpty()) { passwordEditText.text.toString() } else { password }
                 }
 
-                if(avatarIsChanged || avatar == ""){
+                if (avatarIsChanged || avatar == "") {
                     startLoading()
                     viewModel.edit(this, login, nameHere, surnameHere, passwordHere, localURI.toString())
-                }else{
+                } else {
                     startLoading()
                     viewModel.edit(this, login, nameHere, surnameHere, passwordHere, avatar)
                 }
@@ -190,7 +221,7 @@ class EditAccount : AppCompatActivity() {
         if(author_avatar!!.isNotEmpty()){
             newAvatar = author_avatar
         }
-        supabaseViewModel.updateAccInfo(login, "$newName $newSurname", newAvatar)
+        supabaseViewModel.updateAccInfo(this,login, "$newName $newSurname", newAvatar)
     }
 
     private fun startLoading(){
@@ -202,6 +233,22 @@ class EditAccount : AppCompatActivity() {
     private fun stopLoading() {
         binding.submitButton.isEnabled = true
         binding.loadingBar.visibility = View.GONE
+    }
+
+    private fun EditText.afterChangeWithDebounce(debounceTime: Long = 500L, onDebouncedInput: (String) -> Unit) {
+        var debounceJob: Job? = null
+
+        this.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                debounceJob?.cancel()
+                debounceJob = CoroutineScope(Dispatchers.Main).launch {
+                    delay(debounceTime)
+                    s?.toString()?.let { onDebouncedInput(it) }
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
     companion object {

@@ -175,7 +175,7 @@ class UseCase @Inject constructor(){
     suspend fun getFavourites(ids: List<Int>): List<FormDto>{
         return supabase.from(SUPABASE_NAME_KEY).select{
             filter {
-                or{
+                or {
                     ids.forEach { id ->
                         eq("id", id)
                     }

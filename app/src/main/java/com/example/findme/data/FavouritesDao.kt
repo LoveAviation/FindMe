@@ -16,4 +16,7 @@ interface FavouritesDao {
 
     @Query("DELETE FROM favourites_forms WHERE id = :favouriteId")
     fun deleteFavourite(favouriteId: Int)
+
+    @Query("DELETE FROM favourites_forms")
+    fun deleteAllFavourites()
 }

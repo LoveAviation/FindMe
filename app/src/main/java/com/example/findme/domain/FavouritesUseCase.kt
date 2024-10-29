@@ -24,4 +24,7 @@ class FavouritesUseCase @Inject constructor(private val favDao: FavouritesDao) {
     suspend fun delete(id:Int) = withContext(Dispatchers.IO){
         favDao.deleteFavourite(id)
     }
+    suspend fun deleteAll() = withContext(Dispatchers.IO){
+        favDao.deleteAllFavourites()
+    }
 }

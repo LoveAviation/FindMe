@@ -206,7 +206,7 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
         builder.setTitle(getString(R.string.warning))
         builder.setMessage("You want to delete this form?")
         builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
-            viewModel.deleteForm(id)
+            viewModel.deleteForm(this, id)
             startLoading()
             dialog.dismiss()
         }
@@ -220,7 +220,7 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
     private fun editForm(){
         if(binding.titleEditText.text!!.trim().isNotEmpty() && binding.descriptionEditText.text!!.trim().isNotEmpty()){
             startLoading()
-            viewModel.editForm(id, binding.titleEditText.text.toString().trim(),
+            viewModel.editForm(this, id, binding.titleEditText.text.toString().trim(),
                 binding.descriptionEditText.text.toString().trim(), tagList, longitude, latitude, author)
         }else{
             Snackbar.make(binding.root, "Please, fill in title and description", Snackbar.LENGTH_SHORT).show()
@@ -230,10 +230,12 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
     private fun startLoading(){
         binding.loadingBar.visibility = View.VISIBLE
         binding.saveButton.isEnabled = false
+        binding.deleteButton.isEnabled = false
     }
 
     private fun stopLoading(){
         binding.loadingBar.visibility = View.GONE
         binding.saveButton.isEnabled = true
+        binding.deleteButton.isEnabled = true
     }
 }
