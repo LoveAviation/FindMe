@@ -24,7 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/back_button_resize"
-            app:title="Enter new data"
+            app:title="@string/enter_new_data"
             app:titleTextAppearance="@style/ToolBarStyle" />
 
         <LinearLayout

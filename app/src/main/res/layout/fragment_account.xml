@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.account.AccountFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -22,21 +27,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ScrollView
-            android:id="@+id/nameScroll"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/accountName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@string/account_name"
+            android:textSize="24sp"
             android:layout_marginStart="32dp"
-            app:layout_constraintLeft_toRightOf="@+id/AvatarImage"
-            app:layout_constraintTop_toTopOf="@id/AvatarImage">
-
-            <TextView
-                android:id="@+id/accountName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/account_name"
-                android:textSize="24sp" />
-        </ScrollView>
+            app:layout_constraintStart_toEndOf="@+id/AvatarImage"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/AvatarImage"/>
 
         <TextView
             android:id="@+id/accountLogin"
@@ -47,7 +48,7 @@
             android:textColor="@color/gray"
             android:textSize="20sp"
             app:layout_constraintLeft_toRightOf="@+id/AvatarImage"
-            app:layout_constraintTop_toBottomOf="@id/nameScroll" />
+            app:layout_constraintTop_toBottomOf="@id/accountName" />
 
         <Button
             android:id="@+id/my_forms"
@@ -109,6 +110,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/favouriteFormsRV" />
 
+        <ProgressBar
+            android:id="@+id/deleting_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/delete_account"
+            app:layout_constraintStart_toStartOf="@id/delete_account"
+            app:layout_constraintEnd_toEndOf="@id/delete_account"/>
+
+        <Button
+            android:id="@+id/delete_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/basic_button"
+            android:text="@string/delete_the_account"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/exit_account" />
+
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/edit_account_button"
+            android:scaleType="centerCrop"
+            android:src="@drawable/settings_image"
+            app:layout_constraintBottom_toBottomOf="@id/AvatarImage"
+            app:layout_constraintEnd_toStartOf="@id/editButton" />
+
         <ImageButton
             android:id="@+id/editButton"
             android:layout_width="35dp"
@@ -121,4 +156,49 @@
             app:layout_constraintBottom_toBottomOf="@id/AvatarImage"
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/sidePanel"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <!-- Переключатель темы -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/themeSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/dark_theme" />
+
+        <!-- Горизонтальный контейнер для кнопок выбора языка -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <!-- Кнопка для английского языка -->
+            <Button
+                android:id="@+id/btnEnglish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="En" />
+
+            <!-- Кнопка для русского языка -->
+            <Button
+                android:id="@+id/btnRussian"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Ru" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

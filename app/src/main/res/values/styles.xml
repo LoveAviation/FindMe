@@ -5,7 +5,7 @@
         <item name="android:elevation">8dp</item>
     </style>
     <style name="TextInputLayout">
-        <item name="boxStrokeColor">@color/selected</item>
+        <item name="boxStrokeColor">@color/primaryColor</item>
         <item name="boxStrokeWidth">2dp</item>
     </style>
     <style name="ToolBarStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">>
@@ -13,10 +13,10 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
     <style name="TextInputLayoutRoundedBox">
-        <item name="boxCornerRadiusBottomEnd">20dp</item> <!-- Закругление углов снизу и справа -->
+        <item name="boxCornerRadiusBottomEnd">20dp</item>
         <item name="boxCornerRadiusBottomStart">20dp</item>
-        <item name="boxCornerRadiusTopEnd">20dp</item> <!-- Закругление углов сверху и справа -->
+        <item name="boxCornerRadiusTopEnd">20dp</item>
         <item name="boxCornerRadiusTopStart">20dp</item>
-        <item name="boxStrokeWidth">1dp</item> <!-- Ширина обводки -->
+        <item name="boxStrokeWidth">1dp</item>
     </style>
 </resources>

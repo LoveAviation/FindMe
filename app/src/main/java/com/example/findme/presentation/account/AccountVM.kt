@@ -1,9 +1,7 @@
 package com.example.findme.presentation.account
 
 
-import android.content.ContentValues.TAG
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -31,6 +29,9 @@ class AccountVM @Inject constructor(
 
     private var _logInState = MutableLiveData<Account?>(null)
     val logInState: LiveData<Account?> get() = _logInState
+
+    private var _deletingState = MutableLiveData<Boolean?>(null)
+    val deletingState: LiveData<Boolean?> get() = _deletingState
 
     fun signIn(lifecycleOwner: LifecycleOwner, login: String, password: String, name: String, surname: String, urlAvatar: Uri?){
         _signInState.value = null
@@ -98,6 +99,22 @@ class AccountVM @Inject constructor(
                 "SUCCESS" -> {
                     _editState.value = avatar
                 }
+            }
+        }
+    }
+
+    fun deleteAccount(lifecycleOwner: LifecycleOwner, login: String){
+        waitForError(lifecycleOwner)
+        databaseUC.deleteAccount(login)
+        databaseUC.deletingResult.observe(lifecycleOwner){ result ->
+            if(result == true){
+                storageUC.deleteAvatar(login)
+            }
+        }
+
+        storageUC.storageState.observe(lifecycleOwner){ result ->
+            if(result == "DELETED"){
+                _deletingState.value = true
             }
         }
     }

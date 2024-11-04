@@ -9,8 +9,8 @@ data class Form @Inject constructor(
     val tags: List<String>,
     val location: String?,
     val author: String?,
-    val author_avatar: String?,
-    val author_login: String,
+    val authorAvatar: String?,
+    val authorLogin: String,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

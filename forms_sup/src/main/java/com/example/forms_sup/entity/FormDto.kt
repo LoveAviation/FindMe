@@ -20,7 +20,7 @@ data class FormDto(
     @SerialName("author")
     val author: String?,
     @SerialName("author_avatar")
-    val author_avatar: String?,
+    val authorAvatar: String?,
     @SerialName("author_login")
-    val author_login: String
+    val authorLogin: String
 )

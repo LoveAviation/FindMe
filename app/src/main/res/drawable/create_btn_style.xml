@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/selected"/>
+    <solid android:color="@color/primaryColor"/>
     <stroke
         android:width="1.5dp"
-        android:color="@color/selected"/> <!-- Фиолетовый цвет (можно изменить на нужный вам) -->
+        android:color="@color/primaryColor"/> <!-- Фиолетовый цвет (можно изменить на нужный вам) -->
     <corners android:radius="26dp"/> <!-- Закругленные края -->
 </shape>

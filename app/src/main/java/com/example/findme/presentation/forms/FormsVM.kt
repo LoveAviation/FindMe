@@ -103,7 +103,15 @@ class FormsVM @Inject constructor(
     fun deleteForm(context: Context, id: Int){
         if (isInternetAvailable(context)) {
             viewModelScope.launch {
-                _formEditingResult.value = formsRep.deleteForm(id)
+                _formDeletingResult.value = formsRep.deleteForm(id)
+            }
+        }
+    }
+
+    fun deleteAllForms(context: Context, login: String){
+        if (isInternetAvailable(context)) {
+            viewModelScope.launch {
+                _formDeletingResult.value = formsRep.deleteAllForms(login)
             }
         }
     }

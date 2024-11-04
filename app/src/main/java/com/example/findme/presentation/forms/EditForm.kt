@@ -1,13 +1,10 @@
 package com.example.findme.presentation.forms
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputType
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -22,7 +19,6 @@ import com.example.findme.databinding.ActivityEditFormBinding
 import com.example.findme.presentation.MainActivity
 import com.example.findme.presentation.forms.adapter.TagsAdapter
 import com.example.findme.presentation.locationMap.MapActivity
-import com.example.forms_sup.entity.Form
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -52,7 +48,7 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
                 finish()
             }else if(result == false){
                 stopLoading()
-                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -61,7 +57,7 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
                 finish()
             }else if(result == false){
                 stopLoading()
-                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -168,7 +164,7 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
         if(longitude != null && latitude != null){
             binding.clearLocationButton.isEnabled = true
             binding.selectedCoordinates.visibility = View.VISIBLE
-            binding.selectedCoordinates.text = "Longitude: $longitude; Latitude: $latitude"
+            binding.selectedCoordinates.text = getString(R.string.longitude_latitude, longitude, latitude)
         }else{
             binding.clearLocationButton.isEnabled = false
             binding.selectedCoordinates.visibility = View.GONE
@@ -204,7 +200,7 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
     private fun showAlertDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.warning))
-        builder.setMessage("You want to delete this form?")
+        builder.setMessage(getString(R.string.you_want_to_delete_this_form))
         builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
             viewModel.deleteForm(this, id)
             startLoading()
@@ -223,7 +219,8 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
             viewModel.editForm(this, id, binding.titleEditText.text.toString().trim(),
                 binding.descriptionEditText.text.toString().trim(), tagList, longitude, latitude, author)
         }else{
-            Snackbar.make(binding.root, "Please, fill in title and description", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.root,
+                getString(R.string.please_fill_in_title_and_description), Snackbar.LENGTH_SHORT).show()
         }
     }
 

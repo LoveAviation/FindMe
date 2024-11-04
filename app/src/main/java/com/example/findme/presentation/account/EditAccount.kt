@@ -1,13 +1,11 @@
 package com.example.findme.presentation.account
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -17,10 +15,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.account_fb.entity.Account
-import com.example.account_fb.other.ErrorStates
 import com.example.findme.databinding.ActivityEditAccountBinding
 import com.example.findme.presentation.MainActivity
 import com.example.findme.presentation.MainActivity.Companion.KEY_AVATAR
@@ -92,7 +88,7 @@ class EditAccount : AppCompatActivity() {
 
         binding.passwordEditText.afterChangeWithDebounce{ input ->
             if(input.length in 1..5){
-                binding.passwordEditText.error = "Password can not have less then 6 symbols"
+                binding.passwordEditText.error = getString(R.string.password_can_not_have_less_then_6_symbols)
             }else{
                 binding.passwordEditText.error = null
             }
@@ -100,7 +96,7 @@ class EditAccount : AppCompatActivity() {
 
         binding.nameEditText.afterChangeWithDebounce{ input ->
             if(input.length in 1..2){
-                binding.nameEditText.error = "Name can not have less then 3 symbols"
+                binding.nameEditText.error = getString(R.string.name_can_not_have_less_then_3_symbols)
             }else{
                 binding.passwordEditText.error = null
             }
@@ -108,7 +104,7 @@ class EditAccount : AppCompatActivity() {
 
         binding.surnameEditText.afterChangeWithDebounce{ input ->
             if(input.length in 1..2){
-                binding.surnameEditText.error = "Surname can not have less then 3 symbols"
+                binding.surnameEditText.error = getString(R.string.surname_can_not_have_less_then_3_symbols)
             }else{
                 binding.passwordEditText.error = null
             }
@@ -143,7 +139,7 @@ class EditAccount : AppCompatActivity() {
                 }
 
             }else{
-                Toast.makeText(this, "Invalid input", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.invalid_input), Toast.LENGTH_SHORT).show()
                 stopLoading()
             }
         }
@@ -190,7 +186,7 @@ class EditAccount : AppCompatActivity() {
 
 
     private fun returnData(login: String, account: Account){
-        updateAccInfoInSupa(account.urlAvatar)
+        updateAccInfoInSupabase(account.urlAvatar)
         startActivity(Intent(this, MainActivity::class.java).apply {
             putExtra(KEY_LOGIN, login)
             putExtra(KEY_PASSWORD, account.password)
@@ -208,7 +204,7 @@ class EditAccount : AppCompatActivity() {
             .circleCrop()
             .into(binding.avatar)
     }
-    private fun updateAccInfoInSupa(author_avatar: String?){
+    private fun updateAccInfoInSupabase(authorAvatar: String?){
         var newName = name
         var newSurname = surname
         var newAvatar: String? = null
@@ -218,8 +214,8 @@ class EditAccount : AppCompatActivity() {
         if(binding.surnameEditText.text!!.isNotEmpty()){
             newSurname = binding.surnameEditText.text.toString()
         }
-        if(author_avatar!!.isNotEmpty()){
-            newAvatar = author_avatar
+        if(authorAvatar!!.isNotEmpty()){
+            newAvatar = authorAvatar
         }
         supabaseViewModel.updateAccInfo(this,login, "$newName $newSurname", newAvatar)
     }

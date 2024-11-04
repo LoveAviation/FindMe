@@ -1,8 +1,8 @@
 package com.example.findme.presentation.forms
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -12,17 +12,15 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
 import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.NumberPicker
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.findme.R
@@ -52,6 +50,7 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
 
     private var longitude : String? = null
     private var latitude : String? = null
+    private var radius : Int = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +64,8 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
             }
 
             if(longitude != null && latitude != null){
-                binding.selectedCoordinates.text = "Longitude: $longitude; Latitude: $latitude"
+                binding.selectedCoordinates.text =
+                    getString(R.string.longitude_latitude, longitude, latitude)
             }else{
                 binding.selectedCoordinates.text = getString(R.string.you_haven_t_selected_coordinates)
             }
@@ -102,7 +102,7 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
                     binding.nothingText.visibility = View.VISIBLE
                 }
 
-                binding.searchResultView.adapter = FormsAdapter(result) { selectedItem ->
+                binding.searchResultView.adapter = FormsAdapter(requireContext(), result) { selectedItem ->
                     var isFavourite = false
                     if (favouritesList != null) {
                         for (id: Int in favouritesList) {
@@ -118,7 +118,7 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
                     intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
                     intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
                     intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
-                    intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.author_avatar)
+                    intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.authorAvatar)
                     intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
 
                     intent.putExtra(FormActivity.KEY_FAVOURITE, isFavourite)
@@ -163,9 +163,36 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
             binding.addLocationButton.visibility = if(isActivated) View.VISIBLE else View.GONE
             binding.clearLocationButton.visibility = if(isActivated) View.VISIBLE else View.GONE
             binding.selectedCoordinates.visibility = if(isActivated) View.VISIBLE else View.GONE
+            binding.radiusButton.visibility = if(isActivated) View.VISIBLE else View.GONE
+            binding.radiusText.visibility = if(isActivated) View.VISIBLE else View.GONE
+            binding.radiusText2.visibility = if(isActivated) View.VISIBLE else View.GONE
+        }
+
+        binding.radiusButton.setOnClickListener{
+            showRadiusPickerDialog()
         }
 
         return binding.root
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun showRadiusPickerDialog() {
+        val numberPicker = NumberPicker(requireContext()).apply {
+            minValue = 1
+            maxValue = 100
+        }
+
+        AlertDialog.Builder(context)
+            .setTitle(getString(R.string.choose_radius))
+            .setView(numberPicker)
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
+                radius = numberPicker.value
+                binding.radiusButton.text = radius.toString()
+                search()
+            }
+            .setNegativeButton(getString(R.string.back), null)
+            .create()
+            .show()
     }
 
     private fun toggleViewSize() {
@@ -239,7 +266,7 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
             binding.loadingBar.visibility = View.VISIBLE
             if (input.isNotEmpty() || tagList.isNotEmpty() || (longitude != null && latitude != null)) {
                 if (binding.locationFilterSwitch.isChecked && longitude != null && latitude != null) {
-                    viewModel.getWithCoordinates(requireContext(), binding.searchEditText.text.toString(), tagList, longitude.toString(), latitude.toString(), "200000")
+                    viewModel.getWithCoordinates(requireContext(), binding.searchEditText.text.toString(), tagList, longitude.toString(), latitude.toString(), (radius*1000).toString())
                 } else {
                     viewModel.getByText(requireContext(),binding.searchEditText.text.toString(), tagList)
                 }
@@ -248,11 +275,11 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
             }
         }else{
             binding.loadingBar.visibility = View.GONE
-            binding.nothingText.text = "NO INTERNET CONNECTION"
+            binding.nothingText.text = getString(R.string.no_internet_connection)
             binding.nothingText.visibility = View.VISIBLE
             binding.searchEditText.isEnabled = false
             binding.filtersButton.isEnabled = false
-            binding.searchResultView.adapter = FormsAdapter(listOf()){}
+            binding.searchResultView.adapter = FormsAdapter(requireContext(), listOf()){}
             viewModel.viewModelScope.launch{
                 delay(1500)
                 search()

@@ -1,8 +1,5 @@
 package com.example.account_fb.data
 
-import android.content.ContentValues.TAG
-import android.media.metrics.Event
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.account_fb.entity.Account
@@ -96,6 +93,20 @@ class DatabaseUC @Inject constructor(){
                 }.addOnFailureListener{ _errorDatabase.value = ErrorStates.ERROR }
             }.addOnFailureListener{ _errorDatabase.value = ErrorStates.ERROR }
         }.addOnFailureListener{ _errorDatabase.value = ErrorStates.ERROR }
+    }
+
+    private val _deletingResult = MutableLiveData<Boolean?>()
+    val deletingResult: LiveData<Boolean?> get() = _deletingResult
+
+    fun deleteAccount(login: String){
+        _errorDatabase.value = ErrorStates.NULL
+
+        databaseReference.child(login).removeValue()
+            .addOnSuccessListener{
+                _deletingResult.value = true
+            }.addOnFailureListener{
+                _errorDatabase.value = ErrorStates.ERROR
+            }
     }
 
 }

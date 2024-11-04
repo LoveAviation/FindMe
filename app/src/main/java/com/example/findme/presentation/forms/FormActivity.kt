@@ -52,16 +52,16 @@ class FormActivity : AppCompatActivity() {
         binding.toolbar.title = intent.getStringExtra(KEY_TITLE)
         binding.title.text = intent.getStringExtra(KEY_TITLE)
         binding.description.text = intent.getStringExtra(KEY_DESCRIPTION)
-        binding.tagsList.text = "Tags: ${intent.getStringExtra(KEY_TAGS)}"
+        binding.tagsList.text = getString(R.string.tags, intent.getStringExtra(KEY_TAGS))
         binding.author.text = intent.getStringExtra(KEY_AUTHOR)
         location = intent.getStringExtra(KEY_LOCATION)
 
         if (location != null){
             binding.locationButton.visibility = View.VISIBLE
             binding.locationButton.setOnClickListener{
-                val latANDlong = location!!.split(" ")
-                val latitude = latANDlong[0].toDouble()
-                val longitude = latANDlong[1].toDouble()
+                val latAndLong = location!!.split(" ")
+                val latitude = latAndLong[0].toDouble()
+                val longitude = latAndLong[1].toDouble()
 
                 openMaps(latitude, longitude)
             }
@@ -99,7 +99,7 @@ class FormActivity : AppCompatActivity() {
         if (yandexMapsIntent.resolveActivity(packageManager) != null) {
             startActivity(yandexMapsIntent)
         } else {
-            Toast.makeText(this, "Download Google Maps", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.download_google_maps), Toast.LENGTH_SHORT).show()
         }
     }
 

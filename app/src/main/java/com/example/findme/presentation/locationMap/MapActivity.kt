@@ -2,14 +2,12 @@ package com.example.findme.presentation.locationMap
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
@@ -64,13 +62,11 @@ class MapActivity : AppCompatActivity() {
             }
 
             marker?.position = geoPoint
-            marker?.title = "Selected location"
-            marker?.snippet = "Click \"Select\" to confirm"
+            marker?.title = getString(R.string.selected_location)
+            marker?.snippet = getString(R.string.click_select_to_confirm)
 
             longitude = geoPoint.longitude
             latitude = geoPoint.latitude
-
-            Log.d(TAG, "Current location: $longitude, $latitude")
             return true
         }
     }
@@ -94,7 +90,7 @@ class MapActivity : AppCompatActivity() {
                     binding.mapView.controller.setZoom(5.0)
                 }
             } else {
-                Toast.makeText(this, "Turn on geolocation", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.turn_on_geolocation), Toast.LENGTH_LONG).show()
                 startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
             }
         }
@@ -151,15 +147,15 @@ class MapActivity : AppCompatActivity() {
             if (marker == null) {
                 marker = Marker(binding.mapView).apply {
                     position = GeoPoint(latitude, longitude)
-                    title = "Your Location"
-                    snippet = "App founded you!"
+                    title = getString(R.string.your_location)
+                    snippet = getString(R.string.app_founded_you)
                     icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_pin, null)
                 }
                 binding.mapView.overlays.add(marker)
             }else{
                 marker?.position = GeoPoint(latitude, longitude)
-                marker?.title = "Your Location"
-                marker?.snippet = "App founded you!"
+                marker?.title = getString(R.string.your_location)
+                marker?.snippet = getString(R.string.app_founded_you)
             }
             binding.mapView.controller.setZoom(20.0)
             binding.mapView.controller.setCenter(GeoPoint(latitude, longitude))
@@ -190,8 +186,6 @@ class MapActivity : AppCompatActivity() {
 
     private fun stopLoading() {
         binding.loadingBar.visibility = View.GONE
-
-        Log.d(TAG, "Current location: $longitude, $latitude")
     }
 
     companion object {

@@ -82,7 +82,7 @@
         android:id="@+id/author_avatar"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:contentDescription="@string/its_avatar_of_author"
+        android:contentDescription="@string/this_is_avatar_of_author_of_form"
         android:src="@drawable/profile_button"
         android:scaleType="centerCrop"
         app:layout_constraintTop_toBottomOf="@id/locationButton"

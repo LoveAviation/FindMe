@@ -21,7 +21,6 @@ import com.example.findme.databinding.ActivityCreateFormBinding
 import com.example.findme.presentation.MainActivity
 import com.example.findme.presentation.forms.adapter.TagsAdapter
 import com.example.findme.presentation.locationMap.MapActivity
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,7 +69,7 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
 
             if(longitude != "0.0" && latitude != "0.0"){
                 binding.selectedCoordinates.visibility = View.VISIBLE
-                binding.selectedCoordinates.text = "Longitude: $longitude; Latitude: $latitude"
+                binding.selectedCoordinates.text = getString(R.string.longitude_latitude, longitude, latitude)
             }else{
                 binding.selectedCoordinates.text = ""
                 binding.selectedCoordinates.visibility = View.GONE
@@ -99,13 +98,15 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
 
         binding.titleEditText.afterChangeWithDebounce{ input ->
             if(input.length < 3){
-                binding.titleEditText.error = "Title can not have less then 3 symbols"
+                binding.titleEditText.error =
+                    getString(R.string.title_can_not_have_less_then_3_symbols)
             }
         }
 
         binding.descriptionEditText.afterChangeWithDebounce{ input ->
             if(input.length < 3){
-                binding.descriptionEditText.error = "Description can not have less then 3 symbols"
+                binding.descriptionEditText.error =
+                    getString(R.string.description_can_not_have_less_then_3_symbols)
             }
         }
 
@@ -117,7 +118,7 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
             if(tagList.size < 5){
                 showInputDialog()
             }else{
-                Toast.makeText(this, "Only 5 tags!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.only_5_tags), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -139,7 +140,7 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
             updateUI()
         }
 
-        binding.saveButton.setOnClickListener{
+        binding.createButton.setOnClickListener{
             if(binding.titleEditText.text!!.trim().isNotEmpty()
                 && binding.titleEditText.text!!.trim().length >= 3
                 && binding.descriptionEditText.text!!.trim().isNotEmpty()
@@ -152,15 +153,16 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
                     if(result == true){
                         finish()
                     }else if(result == false){
-                        Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                     }
                 }
             }else{
                 if(binding.titleEditText.text!!.trim().isEmpty()){
-                    binding.titleEditText.error = "Please fill in title"
+                    binding.titleEditText.error = getString(R.string.please_fill_in_title)
                 }
                 if(binding.descriptionEditText.text!!.trim().isEmpty()){
-                    binding.descriptionEditText.error = "Please fill in description"
+                    binding.descriptionEditText.error =
+                        getString(R.string.please_fill_in_description)
                 }
             }
         }

@@ -1,12 +1,10 @@
 package com.example.findme.presentation.account
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.activity.result.ActivityResultLauncher
@@ -56,25 +54,29 @@ class RegistrationActivity: AppCompatActivity() {
 
         binding.loginEditText.afterChangeWithDebounce{ input ->
             if(input.length < 5){
-                binding.loginEditText.error = "Login can not have less then 3 symbols"
+                binding.loginEditText.error =
+                    getString(R.string.login_can_not_have_less_then_3_symbols)
             }
         }
 
         binding.passwordEditText.afterChangeWithDebounce{ input ->
             if(input.length < 6){
-                binding.passwordEditText.error = "Password can not have less then 6 symbols"
+                binding.passwordEditText.error =
+                    getString(R.string.password_can_not_have_less_then_6_symbols)
             }
         }
 
         binding.nameEditText.afterChangeWithDebounce{ input ->
             if(input.length < 3){
-                binding.nameEditText.error = "Name can not have less then 3 symbols"
+                binding.nameEditText.error =
+                    getString(R.string.name_can_not_have_less_then_3_symbols)
             }
         }
 
         binding.surnameEditText.afterChangeWithDebounce{ input ->
             if(input.length < 3){
-                binding.surnameEditText.error = "Surname can not have less then 3 symbols"
+                binding.surnameEditText.error =
+                    getString(R.string.surname_can_not_have_less_then_3_symbols)
             }
         }
 
@@ -98,7 +100,8 @@ class RegistrationActivity: AppCompatActivity() {
                         }
                     }
                 }else{
-                    Snackbar.make(binding.root, "Please, enter your login and password", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(binding.root,
+                        getString(R.string.please_enter_your_login_and_password), Snackbar.LENGTH_LONG).show()
                 }
             }else if(status == 1 && inputIsValid() &&
                 password.isNotEmpty()
@@ -111,17 +114,17 @@ class RegistrationActivity: AppCompatActivity() {
                     when(state){
                         "ENGAGED" -> {
                             stopLoading()
-                            Snackbar.make(binding.root, "This login is engaged", Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(binding.root,
+                                getString(R.string.this_login_is_engaged), Snackbar.LENGTH_LONG).show()
                         }
                         null -> waitForError()
                         else -> {
                             returnData(login, Account(password, name, surname, state))
                         }
                     }
-                    Log.d(TAG, state.toString())
                 }
             }else{
-                Snackbar.make(binding.root, "Invalid input", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, getString(R.string.invalid_input), Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -185,16 +188,13 @@ class RegistrationActivity: AppCompatActivity() {
 
     private fun waitForError(){
         viewModel.error.observe(this){ e ->
-            when(e){
-                ErrorStates.WRONG_PASSWORD -> {
-                    Snackbar.make(binding.root, "Wrong password", Snackbar.LENGTH_LONG).show()
+            if(e == ErrorStates.WRONG_PASSWORD) {
+                    Snackbar.make(binding.root,
+                        getString(R.string.wrong_password), Snackbar.LENGTH_LONG).show()
                     stopLoading()
-                }
-                ErrorStates.ERROR -> {
-                    Snackbar.make(binding.root, "Something went wrong", Snackbar.LENGTH_LONG).show()
+            }else if(e == ErrorStates.ERROR) {
+                    Snackbar.make(binding.root, getString(R.string.something_went_wrong), Snackbar.LENGTH_LONG).show()
                     stopLoading()
-                }
-                ErrorStates.NULL -> Log.d(TAG, "Everything OK.")
             }
         }
     }
@@ -215,7 +215,7 @@ class RegistrationActivity: AppCompatActivity() {
         val surname = binding.surnameEditText.text.toString().trim()
 
         if (!(name.length >= 3 && name.matches(namesRegex)) && (surname.trim().length >= 3 && surname.matches(namesRegex))){
-            Snackbar.make(binding.root, "Invalid input", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(binding.root, getString(R.string.invalid_input), Snackbar.LENGTH_LONG).show()
         }
         return (name.length >= 3 && name.matches(namesRegex)) && (surname.trim().length >= 3 && surname.matches(namesRegex))
     }

@@ -15,8 +15,8 @@
             android:layout_height="match_parent"
             android:paddingHorizontal="10dp"
             android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:text="@string/item_title" />
+            android:textColor="@color/black"
+            android:text="some_tag" />
 
         <ImageButton
             android:id="@+id/delete"

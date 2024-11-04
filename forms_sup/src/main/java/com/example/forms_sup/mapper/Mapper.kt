@@ -22,7 +22,7 @@ class Mapper @Inject constructor(){
         return null
     }
 
-    private fun DtoToForm(input: FormDto): Form {
+    private fun dtoToForm(input: FormDto): Form {
         return Form(
             id = input.id,
             title = input.title,
@@ -30,16 +30,16 @@ class Mapper @Inject constructor(){
             tags = input.tags,
             location = decodeWKB(input.location),
             author = input.author,
-            author_avatar = input.author_avatar,
-            author_login = input.author_login
+            authorAvatar = input.authorAvatar,
+            authorLogin = input.authorLogin
         )
     }
 
-    fun FromDtoToForm(input: List<FormDto>): List<Form> {
+    fun fromDtoToForm(input: List<FormDto>): List<Form> {
         val list : MutableList<Form> = mutableListOf()
 
         for(formDto in input){
-            list.add(DtoToForm(formDto))
+            list.add(dtoToForm(formDto))
         }
 
         return list.toList()

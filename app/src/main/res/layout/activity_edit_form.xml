@@ -181,6 +181,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:text="@string/delete_form"
+            android:backgroundTint="@color/red"
             android:paddingHorizontal="30dp"
             android:textSize="24sp"/>
     </LinearLayout>

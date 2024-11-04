@@ -29,11 +29,12 @@
             android:id="@+id/avatar"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:contentDescription="@string/click_to_choose_avatar"
-            app:srcCompat="@drawable/profile_button"
-            android:scaleType="centerCrop"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/click_to_choose_avatar"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/profile_button" />
+
         <TextView
             android:id="@+id/avatar_text"
             android:layout_width="wrap_content"
@@ -55,9 +56,10 @@
             android:id="@+id/name_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/use_name_and_surname"
-            android:textColor="@color/gray"
-            android:layout_gravity="center_horizontal" />
+            android:buttonTint="@color/primaryColor"
+            android:textColor="@color/gray" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/title_textInpLayout"
@@ -165,14 +167,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:id="@+id/save_button"
+            android:id="@+id/create_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:text="@string/create_btn_text"
             android:paddingHorizontal="30dp"
-            android:backgroundTint="@color/selected"
             android:textSize="24sp"/>
     </LinearLayout>
 

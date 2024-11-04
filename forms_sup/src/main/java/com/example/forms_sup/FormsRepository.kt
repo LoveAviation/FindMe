@@ -30,28 +30,28 @@ class FormsRepository @Inject constructor(
         return wkb.joinToString("") { String.format("%02X", it) }
     }
 
-    suspend fun addForm(title: String, description: String, tags: List<String>, longitude: String?, latitude: String?, author: String, author_avatar: String?, author_login: String){
-        _formInsertionResult.value = useCase.addForm(title, description, tags, encodeToWKB(longitude, latitude), author, author_avatar, author_login)
+    suspend fun addForm(title: String, description: String, tags: List<String>, longitude: String?, latitude: String?, author: String, authorAvatar: String?, authorLogin: String){
+        _formInsertionResult.value = useCase.addForm(title, description, tags, encodeToWKB(longitude, latitude), author, authorAvatar, authorLogin)
     }
 
     suspend fun getAllForms(): List<Form>{
-        return mapper.FromDtoToForm(useCase.allForms())
+        return mapper.fromDtoToForm(useCase.allForms())
     }
 
     suspend fun getByText(wordsToFind: String, tags: List<String>): List<Form>{
-        return mapper.FromDtoToForm(useCase.getFormsByText(wordsToFind, tags))
+        return mapper.fromDtoToForm(useCase.getFormsByText(wordsToFind, tags))
     }
 
     suspend fun getByCoordinates(longitude: String, latitude: String, radius: String): List<Form>{
-        return mapper.FromDtoToForm(useCase.searchByCoordinates(longitude, latitude, radius))
+        return mapper.fromDtoToForm(useCase.searchByCoordinates(longitude, latitude, radius))
     }
 
     suspend fun myForms(login: String): List<Form>{
-        return mapper.FromDtoToForm(useCase.myForms(login))
+        return mapper.fromDtoToForm(useCase.myForms(login))
     }
 
-    suspend fun updateAccInfo(login: String, author: String, author_avatar: String?){
-        useCase.updateAccInfo(login, author, author_avatar)
+    suspend fun updateAccInfo(login: String, author: String, authorAvatar: String?){
+        useCase.updateAccInfo(login, author, authorAvatar)
     }
 
     suspend fun editForm(id: Int, title: String, description: String, tags: List<String>, longitude: String?, latitude: String?, author: String?): Boolean{
@@ -62,8 +62,12 @@ class FormsRepository @Inject constructor(
         return useCase.deleteForm(id)
     }
 
+    suspend fun deleteAllForms(login: String): Boolean{
+        return useCase.deleteAllForms(login)
+    }
+
     suspend fun getFavourites(ids: List<Int>): List<Form>{
-        return mapper.FromDtoToForm(useCase.getFavourites(ids))
+        return mapper.fromDtoToForm(useCase.getFavourites(ids))
     }
 
 }

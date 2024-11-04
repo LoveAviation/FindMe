@@ -46,7 +46,7 @@ class StorageUC @Inject constructor() {
     }
 
     fun deleteAvatar(login: String){
-        _errorStorage.value = ErrorStates.ERROR
+        _errorStorage.value = ErrorStates.NULL
         _storageState.value = null
         val oldImageRef = storageReference.child("${login}_avatar")
         oldImageRef.metadata.addOnSuccessListener {
@@ -56,7 +56,7 @@ class StorageUC @Inject constructor() {
                 _errorStorage.value = ErrorStates.ERROR
             }
         }.addOnFailureListener{
-            _errorStorage.value = ErrorStates.ERROR
+            _storageState.value = "DELETED"
         }
     }
 }

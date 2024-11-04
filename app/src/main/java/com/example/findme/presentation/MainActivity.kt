@@ -1,8 +1,6 @@
 package com.example.findme.presentation
 
-
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PorterDuff.Mode
@@ -10,9 +8,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.viewModelScope
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.findme.R
@@ -22,7 +19,7 @@ import com.example.findme.presentation.account.RegistrationActivity
 import com.example.findme.presentation.forms.CreateFormActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnDataClearListener {
@@ -34,11 +31,17 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
     private lateinit var navController : NavController
     private val accData  = SaveDataClass()
 
-    private val viewModel : FavouritesVM by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        loadLocale()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
+        val preferences = getSharedPreferences("settings", MODE_PRIVATE)
+        val isDarkTheme = preferences.getBoolean("dark_theme", false)
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDarkTheme) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        )
         setContentView(binding.root)
 
         sharPref = getSharedPreferences("MainSharedPref", MODE_PRIVATE)
@@ -78,7 +81,7 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
         with(binding) {
             when (fragment) {
                 1 -> {
-                    searchButton.setColorFilter(getColor(R.color.selected), Mode.SRC_ATOP)
+                    searchButton.setColorFilter(getColor(R.color.primaryColor), Mode.SRC_ATOP)
                     searchButton.isEnabled = false
                     accountButton.colorFilter = null
                     accountButton.isEnabled = true
@@ -94,7 +97,7 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
                     }else {
                         searchButton.colorFilter = null
                         searchButton.isEnabled = true
-                        accountButton.setColorFilter(getColor(R.color.selected), Mode.SRC_ATOP)
+                        accountButton.setColorFilter(getColor(R.color.primaryColor), Mode.SRC_ATOP)
                         accountButton.isEnabled = false
                         btnSelected = 3
                         if (navController.currentDestination?.id != R.id.accountFragment) {
@@ -117,7 +120,7 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
         if(isInternetAvailable()){
             startActivity(Intent(this, RegistrationActivity::class.java))
         }else{
-            Snackbar.make(binding.root, "NO INTERNET CONNECTION", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(binding.root, getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -146,6 +149,20 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
                 (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                         networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                         networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+    }
+
+    private fun loadLocale() {
+        val preferences = getSharedPreferences("settings", MODE_PRIVATE)
+        val languageCode = preferences.getString("language", Locale.getDefault().language) ?: Locale.getDefault().language
+
+        Log.d(TAG, "HEREEEEEEE $languageCode")
+
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+
+        val config = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
     }
 
     companion object{
