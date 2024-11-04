@@ -93,4 +93,6 @@
     <string name="invalid_input">Неверный ввод</string>
     <string name="wrong_password">Неправильный пароль</string>
     <string name="enter_new_data">Введите новые значения</string>
+    <string name="en">Англ.</string>
+    <string name="ru">Русс.</string>
 </resources>

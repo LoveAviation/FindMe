@@ -4,6 +4,12 @@ import android.annotation.SuppressLint
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Data Transfer Object
+ *
+ * Сериализуемый класс, который отправляется в базу данных supabase
+ */
+
 @SuppressLint("UnsafeOptInUsageError")
 @Serializable
 data class FormDto(

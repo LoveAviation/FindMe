@@ -9,6 +9,14 @@ import com.example.findme.databinding.FormItemBinding
 import com.example.forms_sup.entity.Form
 import com.example.findme.R
 
+/**
+ * Адаптер для показа анкет в SearchFragment
+ *
+ * @param context нужен контекст для получение ресурсов в строке 33
+ * @param items поставить сюда список анкет класса Form
+ * @param onItemClick имплементируйте эту функцию чтобы правильно обрабатывать нажатия на анкеты
+ */
+
 class FormsAdapter(
     private val context: Context,
     private val items: List<Form>,

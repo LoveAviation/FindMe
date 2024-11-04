@@ -6,6 +6,10 @@ import org.locationtech.jts.geom.Point
 import org.locationtech.jts.io.WKBReader
 import javax.inject.Inject
 
+/**
+ * Класс для перехода от анкеты к DTO
+ */
+
 class Mapper @Inject constructor(){
 
     private fun decodeWKB(wkbHex: String?): String? {

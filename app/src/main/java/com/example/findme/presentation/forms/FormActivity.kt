@@ -14,6 +14,10 @@ import com.example.findme.R
 import com.example.findme.presentation.FavouritesVM
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity для просмотра анкеты
+ */
+
 @AndroidEntryPoint
 class FormActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFormBinding

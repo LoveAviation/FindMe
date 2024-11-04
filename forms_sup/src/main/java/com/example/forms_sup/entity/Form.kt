@@ -2,6 +2,12 @@ package com.example.forms_sup.entity
 
 import javax.inject.Inject
 
+/**
+ * Класс АНКЕТЫ
+ *
+ * используется внутри кода
+ */
+
 data class Form @Inject constructor(
     val id: Int? = null,
     val title: String,

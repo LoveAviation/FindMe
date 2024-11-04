@@ -15,6 +15,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel который овечает за любые действия с анкетами в базе данных Supabase
+ */
+
 @HiltViewModel
 class FormsVM @Inject constructor(
     private val formsRep : FormsRepository,

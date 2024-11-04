@@ -31,6 +31,12 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Overlay
 
+/**
+ * Откройте этот Activity при помощи registerForActivityResult
+ * чтобы получить координаты выбранные пользователем.
+ * Находит нынешнюю локацию пользователя
+ */
+
 class MapActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMapBinding

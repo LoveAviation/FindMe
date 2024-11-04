@@ -11,6 +11,10 @@ import org.locationtech.jts.io.WKBWriter
 import org.locationtech.jts.geom.Point
 import javax.inject.Inject
 
+/**
+ * Класс, выходящий за пределы модуля
+ * отвечает за все действия с анкетами
+ */
 
 class FormsRepository @Inject constructor(
     private val useCase: UseCase,

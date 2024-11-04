@@ -5,6 +5,11 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.example.findme.other.FavouriteForm
 
+/**
+ * Data Access Object
+ * Интерфейс с главными функциями
+ * для избранных анкет
+ */
 
 @Dao
 interface FavouritesDao {

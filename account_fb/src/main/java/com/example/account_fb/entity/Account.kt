@@ -1,6 +1,12 @@
 package com.example.account_fb.entity
 
 /**
+ * Класс аккаунта
+ * @param password
+ * @param name
+ * @param surname
+ * @param urlAvatar
+ *
  * ЗДЕСЬ НЕТ ЛОГИНА,
  * ОН СРАЗУ ПРОСТАВЛЯЕТСЯ В РОДИТЕЛЬСКОМ УЗЛЕ
  */

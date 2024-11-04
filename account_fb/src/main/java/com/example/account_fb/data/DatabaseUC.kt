@@ -10,6 +10,13 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import javax.inject.Inject
 
+/**
+ * Класс отвечающий за работу с базами данных
+ *
+ * UC - Use Case
+ * является Use Case так как настоящая работа с базами данных происходит на сервере
+ */
+
 class DatabaseUC @Inject constructor(){
 
     private val databaseReference: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference.child("Users") }

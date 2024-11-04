@@ -30,6 +30,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Activity, который открывается и отвечает за регистрацию И вход в аккаунт
+ */
+
 @AndroidEntryPoint
 class RegistrationActivity: AppCompatActivity() {
     private lateinit var binding : ActivityRegistrationBinding

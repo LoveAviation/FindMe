@@ -1,5 +1,9 @@
 package com.example.account_fb.other
 
+/**
+ * Класс с состаяниями ошибок
+ */
+
 enum class ErrorStates {
     WRONG_PASSWORD,
     ERROR,

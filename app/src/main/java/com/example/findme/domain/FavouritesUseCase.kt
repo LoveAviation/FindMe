@@ -6,6 +6,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * Класс, который исполняет все функции
+ * FavouritesDao.
+ * Работает ассинхронно, нужны корутины.
+ */
+
 class FavouritesUseCase @Inject constructor(private val favDao: FavouritesDao) {
     suspend fun getAll(): List<Int> = withContext(Dispatchers.IO){
         val toReturn = mutableListOf<Int>()

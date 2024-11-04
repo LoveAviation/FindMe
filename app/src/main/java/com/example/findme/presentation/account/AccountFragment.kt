@@ -30,6 +30,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import kotlin.getValue
 
+/**
+ * Fragment для просмотра и действия с аккаунтом пользователя
+ */
+
 @AndroidEntryPoint
 class AccountFragment : Fragment() {
     private var accLogin: String? = null

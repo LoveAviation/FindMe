@@ -15,11 +15,17 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.findme.R
 import com.example.findme.databinding.ActivityMainBinding
 import com.example.findme.other.OnDataClearListener
+import com.example.findme.other.SaveDataClass
 import com.example.findme.presentation.account.RegistrationActivity
 import com.example.findme.presentation.forms.CreateFormActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
+
+/**
+ * Главный класс
+ * В нем хранятся данные об аккаунте и идет работа Toolbar'a
+ */
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnDataClearListener {

@@ -9,6 +9,10 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import javax.inject.Inject
 
+/**
+ * Класс, который выполняет все действия с анкетами
+ * требуются корутины.
+ */
 
 class UseCase @Inject constructor(){
 

@@ -10,6 +10,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel для избранных анкет.
+ * Выполняет все функции FavouritesUseCase асинхронно
+ */
+
 @HiltViewModel
 class FavouritesVM @Inject constructor(private val useCase: FavouritesUseCase): ViewModel() {
 

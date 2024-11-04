@@ -8,6 +8,13 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import javax.inject.Inject
 
+/**
+ * Класс по работе с хранилищем
+ *
+ * UC - Use Case
+ * является Use Case так как настоящая работа с базами данных происходит на сервере
+ */
+
 class StorageUC @Inject constructor() {
     private val storageReference: StorageReference by lazy { FirebaseStorage.getInstance().reference.child("Avatars") }
 

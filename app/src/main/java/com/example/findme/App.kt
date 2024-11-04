@@ -1,16 +1,19 @@
 package com.example.findme
 
 import android.app.Application
-import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.Configuration
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.room.Room
 import com.example.findme.data.AppDatabase
 import dagger.hilt.android.HiltAndroidApp
-import java.util.Locale
+
+/**
+ * Главный класс Application.
+ * Здесь выставляется тема при запуске приложения
+ * и создается база данных Room
+ * для избранных анкет
+ */
+
 
 @HiltAndroidApp
 class App : Application(){

@@ -14,6 +14,9 @@ import com.example.account_fb.other.ErrorStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+/**
+ * ViewModel, который отвечает за любые действия с аккаунтАМИ
+ */
 
 @HiltViewModel
 class AccountVM @Inject constructor(

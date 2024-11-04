@@ -5,9 +5,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.findme.databinding.TagItemBinding
 
+/**
+ * Адаптер для списка тэгов
+ *
+ * @param items список слов
+ * @param listener имплементируйте это, чтобы правильно отвечать на нажатия на крестик
+ */
+
 class TagsAdapter(
-    private val items: List<String>, // список данных (например, список текстов)
-    private val listener: OnButtonClickListener // интерфейс для обработки кликов по кнопке
+    private val items: List<String>,
+    private val listener: OnButtonClickListener
 ) : RecyclerView.Adapter<TagsAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: TagItemBinding) : RecyclerView.ViewHolder(binding.root) {

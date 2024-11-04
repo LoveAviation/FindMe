@@ -11,6 +11,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Главный объект приложения
+ * Здесь выдается база данных
+ * и DAO
+ */
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule{

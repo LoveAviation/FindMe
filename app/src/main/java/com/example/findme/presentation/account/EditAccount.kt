@@ -33,6 +33,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Activity, которое открывается при изменении аккаунта
+ */
+
 @AndroidEntryPoint
 class EditAccount : AppCompatActivity() {
 

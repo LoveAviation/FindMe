@@ -36,6 +36,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment в котором идет поиск анкет
+ */
+
 @AndroidEntryPoint
 class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
     private lateinit var _binding : FragmentSearchBinding

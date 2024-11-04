@@ -28,6 +28,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Activity в котором создаются анкеты
+ */
+
 @AndroidEntryPoint
 class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListener  {
     private lateinit var binding: ActivityCreateFormBinding

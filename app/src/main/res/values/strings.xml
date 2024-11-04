@@ -92,4 +92,6 @@
     <string name="invalid_input">Invalid input</string>
     <string name="wrong_password">Wrong password</string>
     <string name="enter_new_data">Enter new data</string>
+    <string name="en">Eng.</string>
+    <string name="ru">Russ.</string>
 </resources>

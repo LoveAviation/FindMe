@@ -22,6 +22,9 @@ import com.example.findme.presentation.locationMap.MapActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity, которая открывается при изменении анкеты
+ */
 
 @AndroidEntryPoint
 class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
