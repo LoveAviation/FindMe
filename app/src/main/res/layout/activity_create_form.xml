@@ -16,14 +16,21 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:background="@android:color/transparent"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:title="@string/create_activity_title"
-            app:titleTextAppearance="@style/ToolBarStyle"
-            app:buttonGravity="center_vertical"
             android:paddingVertical="5dp"
-            app:navigationIcon="@drawable/back_button_resize" />
+            app:navigationIcon="@drawable/back_button_resize">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_activity_title"
+                android:layout_gravity="center"
+                android:id="@+id/toolbar_title"
+                android:textAppearance="@style/ToolBarStyle"/>
+
+
+        </androidx.appcompat.widget.Toolbar>
 
         <ImageView
             android:id="@+id/avatar"
@@ -34,14 +41,6 @@
             android:contentDescription="@string/click_to_choose_avatar"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/profile_button" />
-
-        <TextView
-            android:id="@+id/avatar_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/your_avatar_that_will_be_on_form"
-            android:textColor="@color/gray"
-            android:layout_gravity="center"/>
 
         <TextView
             android:id="@+id/author"

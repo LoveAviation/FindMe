@@ -1,6 +1,8 @@
 package com.example.findme.presentation.forms.adapter
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -35,6 +37,11 @@ class FormsAdapter(
         if (items[position].authorAvatar != null){
             Glide.with(holder.binding.root)
                 .load(items[position].authorAvatar)
+                .circleCrop()
+                .into(holder.binding.avatar)
+        }else{
+            Glide.with(holder.binding.root)
+                .load(R.drawable.profile_button)
                 .circleCrop()
                 .into(holder.binding.avatar)
         }
