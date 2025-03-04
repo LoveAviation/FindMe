@@ -83,4 +83,6 @@ dependencies {
     implementation("com.android.support:appcompat-v7:28.0.0")
 
     implementation("androidx.core:core:1.15.0")
+
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
 }

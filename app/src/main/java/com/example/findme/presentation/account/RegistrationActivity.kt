@@ -11,6 +11,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.bumptech.glide.Glide
 import com.example.account_fb.entity.Account
 import com.example.account_fb.other.ErrorStates
@@ -26,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,6 +43,7 @@ class RegistrationActivity: AppCompatActivity() {
     private lateinit var binding : ActivityRegistrationBinding
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
     private var status = 1
+    private var registrationIs = false
     private val viewModel: AccountVM by viewModels()
     private var localURI: Uri? = null
 
@@ -113,16 +118,19 @@ class RegistrationActivity: AppCompatActivity() {
                 && login.length >= 5
                 && login.isNotEmpty()){
                 startLoading()
+                registrationIs = true
                 viewModel.signIn(this, login, password, name, surname, localURI)
                 viewModel.signInState.observe(this){ state ->
                     when(state){
                         "ENGAGED" -> {
+                            registrationIs = false
                             stopLoading()
                             Snackbar.make(binding.root,
                                 getString(R.string.this_login_is_engaged), Snackbar.LENGTH_LONG).show()
                         }
                         null -> waitForError()
                         else -> {
+                            registrationIs = false
                             returnData(login, Account(password, name, surname, state))
                         }
                     }
@@ -198,19 +206,29 @@ class RegistrationActivity: AppCompatActivity() {
                     stopLoading()
             }else if(e == ErrorStates.ERROR) {
                     Snackbar.make(binding.root, getString(R.string.something_went_wrong), Snackbar.LENGTH_LONG).show()
+                    registrationIs = false
                     stopLoading()
             }
         }
     }
 
+    private fun inputFieldsStatus(status: Boolean){
+        binding.loginEditText.isEnabled = status
+        binding.passwordEditText.isEnabled = status
+        binding.nameEditText.isEnabled = status
+        binding.surnameEditText.isEnabled = status
+    }
+
     private fun startLoading(){
         binding.loadingBar.visibility = View.VISIBLE
         binding.button.isEnabled = false
+        inputFieldsStatus(false)
     }
 
     private fun stopLoading(){
         binding.loadingBar.visibility = View.GONE
         binding.button.isEnabled = true
+        inputFieldsStatus(true)
     }
 
     private fun inputIsValid(): Boolean{
@@ -246,5 +264,21 @@ class RegistrationActivity: AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (registrationIs){
+            val inputData = workDataOf(
+                RegCloseWorker.LOGIN_FOR_WORKER to binding.loginEditText.text?.trim().toString(),
+            )
+
+            val workRequest = OneTimeWorkRequestBuilder<RegCloseWorker>()
+                .setInputData(inputData)
+                .build()
+
+            WorkManager.getInstance(this).enqueue(workRequest)
+        }
     }
 }

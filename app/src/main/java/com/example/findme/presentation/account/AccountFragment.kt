@@ -29,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import kotlin.getValue
+import androidx.core.content.edit
 
 /**
  * Fragment для просмотра и действия с аккаунтом пользователя
@@ -72,7 +73,7 @@ class AccountFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = FragmentAccountBinding.inflate(layoutInflater)
         return binding.root
@@ -102,7 +103,7 @@ class AccountFragment : Fragment() {
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
-            preferences.edit().putBoolean("dark_theme", isChecked).apply()
+            preferences.edit() { putBoolean("dark_theme", isChecked) }
         }
 
         binding.btnEnglish.setOnClickListener {
