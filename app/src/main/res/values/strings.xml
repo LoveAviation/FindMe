@@ -30,9 +30,8 @@
     <string name="click_to_choose_avatar">Click on image to choose avatar</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="login">Login</string>
-    <string name="submit">Submit</string>
     <string name="edit_account_button">Edit account button</string>
-    <string name="remember">LOGIN CAN NOT BE CHANGED. PLEASE, REMEMBER HIM.</string>
+    <string name="remember">Login can\'t be changed. Remember it, please.</string>
     <string name="filters_button">Filters button</string>
     <string name="add_tag_to_find">Add tag to find</string>
     <string name="clear">Clear</string>
@@ -50,12 +49,12 @@
     <string name="your_avatar_that_will_be_on_form">Your avatar that will be on form</string>
     <string name="use_name_and_surname">Use name and surname</string>
     <string name="you_haven_t_selected_coordinates">You haven\'t selected coordinates</string>
-    <string name="tap_to_see_location_of_form">Tap to see location of form</string>
+    <string name="tap_to_see_location_of_form">Watch location</string>
     <string name="add_location">Add location</string>
     <string name="change_location">Change location</string>
     <string name="edit_form">Edit form</string>
-    <string name="save_form">Save form</string>
-    <string name="delete_form">Delete form</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
     <string name="tap_to_add_form_to_favourite">Tap to add form to favourite</string>
     <string name="favourite_forms">Favourite forms</string>
     <string name="clear_selected_location">Clear selected location</string>
@@ -63,7 +62,8 @@
     <string name="radius">Radius:</string>
     <string name="km">km</string>
     <string name="delete_the_account">Delete the account</string>
-    <string name="dark_theme">Dark Theme</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
     <string name="no_internet_connection">NO INTERNET CONNECTION</string>
     <string name="your_location">Your Location</string>
     <string name="app_founded_you">App founded you!</string>
@@ -85,8 +85,8 @@
     <string name="this_action_will_delete_account_and_all_forms_of_it">This action will delete account and all forms of it</string>
     <string name="login_can_not_have_less_then_3_symbols">Login can not have less then 5 symbols</string>
     <string name="password_can_not_have_less_then_6_symbols">Password can not have less then 6 symbols</string>
-    <string name="name_can_not_have_less_then_3_symbols">Name can not have less then 3 symbols</string>
-    <string name="surname_can_not_have_less_then_3_symbols">Surname can not have less then 3 symbols</string>
+    <string name="name_can_not_have_less_then_3_symbols">Name can\'t have less then 3 symbols</string>
+    <string name="surname_can_not_have_less_then_3_symbols">Surname can\'t have less then 3 symbols</string>
     <string name="please_enter_your_login_and_password">Please, enter your login and password</string>
     <string name="this_login_is_engaged">This login is engaged</string>
     <string name="invalid_input">Invalid input</string>
@@ -94,4 +94,16 @@
     <string name="enter_new_data">Enter new data</string>
     <string name="en">Eng.</string>
     <string name="ru">Russ.</string>
+    <string name="allow_use_of_geolocation">Allow use of geolocation</string>
+    <string name="turn_on_notification_for_proper_work">Turn on notification for proper work</string>
+    <string name="set_default">Set default</string>
+    <string name="done">Done</string>
+    <string name="app_theme">App theme:</string>
+    <string name="language">Language</string>
+    <string name="checking_in_progress_please_wait">Checking in progress, please wait</string>
+    <string name="name_can_t_have_numbers">Name can\'t have numbers</string>
+    <string name="surname_can_t_have_numbers">Surname can\'t have numbers</string>
+    <string name="empty">Empty</string>
+    <string name="click_here_to_see_the_location">Click here to see the location</string>
+    <string name="tap_to_see_chosen_location">Tap to see chosen location</string>
 </resources>

@@ -116,4 +116,20 @@ class DatabaseUC @Inject constructor(){
             }
     }
 
+    private val _checkResult = MutableLiveData<Boolean?>()
+    val checkResult: LiveData<Boolean?> get() = _checkResult
+
+    fun checkUser(login: String){
+        _errorDatabase.value = ErrorStates.NULL
+
+        _checkResult.value = null
+        val oldUser = databaseReference.child(login)
+        oldUser.get().addOnCompleteListener { task: Task<DataSnapshot> ->
+            if(task.isSuccessful){
+                val snapshot = task.result.child("password").value
+                _checkResult.value = snapshot != null //если есть пароль - есть пользователь - true
+            }
+        }
+    }
+
 }

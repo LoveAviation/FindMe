@@ -18,8 +18,9 @@
     <ImageButton
         android:id="@+id/center_button"
         android:contentDescription="@string/tap_to_see_your_location_need_to_be_enabled_gps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/osm_ic_center_map"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -30,10 +31,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/back"
-        app:layout_constraintTop_toTopOf="@id/center_button"
-        app:layout_constraintBottom_toBottomOf="@id/center_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="40dp"/>
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="10dp"/>
 
     <Button
         android:id="@+id/select_button"
@@ -42,8 +43,8 @@
         android:text="@string/select"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/back_button"
-        android:layout_marginBottom="20dp"
-        android:layout_marginStart="40dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="25dp"/>
 
     <ProgressBar
         android:id="@+id/loadingBar"

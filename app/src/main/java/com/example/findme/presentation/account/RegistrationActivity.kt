@@ -1,6 +1,9 @@
 package com.example.findme.presentation.account
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -19,6 +23,7 @@ import com.example.account_fb.entity.Account
 import com.example.account_fb.other.ErrorStates
 import com.example.findme.R
 import com.example.findme.databinding.ActivityRegistrationBinding
+import com.example.findme.presentation.CompressorImage
 import com.example.findme.presentation.MainActivity
 import com.example.findme.presentation.MainActivity.Companion.KEY_AVATAR
 import com.example.findme.presentation.MainActivity.Companion.KEY_LOGIN
@@ -29,10 +34,10 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 
 /**
  * Activity, который открывается и отвечает за регистрацию И вход в аккаунт
@@ -46,6 +51,7 @@ class RegistrationActivity: AppCompatActivity() {
     private var registrationIs = false
     private val viewModel: AccountVM by viewModels()
     private var localURI: Uri? = null
+    private val compressor = CompressorImage()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,16 +82,24 @@ class RegistrationActivity: AppCompatActivity() {
         }
 
         binding.nameEditText.afterChangeWithDebounce{ input ->
-            if(input.length < 3){
+            if(input.length in 1..2){
                 binding.nameEditText.error =
                     getString(R.string.name_can_not_have_less_then_3_symbols)
+            } else if(input.contains(Regex("\\d"))){
+                binding.nameEditText.error = getString(R.string.name_can_t_have_numbers)
+            } else{
+                binding.nameEditText.error = null
             }
         }
 
         binding.surnameEditText.afterChangeWithDebounce{ input ->
-            if(input.length < 3){
+            if(input.length in 1..2){
                 binding.surnameEditText.error =
                     getString(R.string.surname_can_not_have_less_then_3_symbols)
+            } else if(input.contains(Regex("\\d"))){
+                binding.surnameEditText.error = getString(R.string.surname_can_t_have_numbers)
+            } else{
+                binding.surnameEditText.error = null
             }
         }
 
@@ -109,8 +123,7 @@ class RegistrationActivity: AppCompatActivity() {
                         }
                     }
                 }else{
-                    Snackbar.make(binding.root,
-                        getString(R.string.please_enter_your_login_and_password), Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(binding.root, getString(R.string.please_enter_your_login_and_password), Snackbar.LENGTH_LONG).show()
                 }
             }else if(status == 1 && inputIsValid() &&
                 password.isNotEmpty()
@@ -119,7 +132,7 @@ class RegistrationActivity: AppCompatActivity() {
                 && login.isNotEmpty()){
                 startLoading()
                 registrationIs = true
-                viewModel.signIn(this, login, password, name, surname, localURI)
+                viewModel.signIn(this, this, login, password, name, surname, localURI)
                 viewModel.signInState.observe(this){ state ->
                     when(state){
                         "ENGAGED" -> {
@@ -144,6 +157,11 @@ class RegistrationActivity: AppCompatActivity() {
             finish()
         }
 
+        binding.clearButton.setOnClickListener {
+            localURI = null
+            binding.avatar.setImageResource(R.drawable.profile_button)
+        }
+
         binding.avatar.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
@@ -154,7 +172,7 @@ class RegistrationActivity: AppCompatActivity() {
             when(status) {
                 1 -> {
                     status = 2
-                    binding.registrationToolbar.title = getString(R.string.log_in)
+                    binding.toolbarTitle.text = getString(R.string.log_in)
                     binding.button.text = getString(R.string.log_in)
                     binding.changeRegistration.text = getString(R.string.create_account)
 
@@ -166,10 +184,11 @@ class RegistrationActivity: AppCompatActivity() {
 
                     binding.avatar.visibility = View.GONE
                     binding.avatarText.visibility = View.GONE
+                    binding.clearButton.visibility = View.GONE
                 }
                 2 -> {
                     status = 1
-                    binding.registrationToolbar.title = getString(R.string.sign_up)
+                    binding.toolbarTitle.text = getString(R.string.sign_up)
                     binding.button.text = getString(R.string.sign_up)
                     binding.changeRegistration.text = getString(R.string.already_have_an_account)
 
@@ -181,6 +200,7 @@ class RegistrationActivity: AppCompatActivity() {
 
                     binding.avatar.visibility = View.VISIBLE
                     binding.avatarText.visibility = View.VISIBLE
+                    binding.clearButton.visibility = View.VISIBLE
                 }
             }
         }
@@ -236,7 +256,7 @@ class RegistrationActivity: AppCompatActivity() {
         val name = binding.nameEditText.text.toString().trim()
         val surname = binding.surnameEditText.text.toString().trim()
 
-        if (!(name.length >= 3 && name.matches(namesRegex)) && (surname.trim().length >= 3 && surname.matches(namesRegex))){
+        if (!(name.length >= 3 && name.matches(namesRegex) && !name.contains(Regex("\\d"))) && (surname.trim().length >= 3 && surname.matches(namesRegex) && !surname.contains(Regex("\\d")))){
             Snackbar.make(binding.root, getString(R.string.invalid_input), Snackbar.LENGTH_LONG).show()
         }
         return (name.length >= 3 && name.matches(namesRegex)) && (surname.trim().length >= 3 && surname.matches(namesRegex))
@@ -245,7 +265,7 @@ class RegistrationActivity: AppCompatActivity() {
 
     private fun setImage(uri: String) {
         Glide.with(this)
-            .load(uri)
+            .load(compressor.compressImage(this, uri.toUri()))
             .circleCrop()
             .into(binding.avatar)
     }
@@ -271,14 +291,13 @@ class RegistrationActivity: AppCompatActivity() {
         super.onDestroy()
         if (registrationIs){
             val inputData = workDataOf(
-                RegCloseWorker.LOGIN_FOR_WORKER to binding.loginEditText.text?.trim().toString(),
-            )
+                RegCloseWorker.LOGIN_FOR_WORKER to binding.loginEditText.text?.trim().toString(),)
 
             val workRequest = OneTimeWorkRequestBuilder<RegCloseWorker>()
                 .setInputData(inputData)
                 .build()
 
-            WorkManager.getInstance(this).enqueue(workRequest)
+            WorkManager.getInstance(applicationContext).enqueue(workRequest)
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.findme.presentation.account
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -13,8 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.account_fb.entity.Account
 import com.example.findme.databinding.ActivityEditAccountBinding
@@ -25,6 +23,7 @@ import com.example.findme.presentation.MainActivity.Companion.KEY_NAME
 import com.example.findme.presentation.MainActivity.Companion.KEY_PASSWORD
 import com.example.findme.presentation.MainActivity.Companion.KEY_SURNAME
 import com.example.findme.R
+import com.example.findme.presentation.CompressorImage
 import com.example.findme.presentation.forms.FormsVM
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -53,6 +52,8 @@ class EditAccount : AppCompatActivity() {
     private lateinit var name : String
     private lateinit var surname : String
     private var avatar : String? = null
+    private var avatarTaken = false
+    private val compressor = CompressorImage()
 
     private var avatarIsChanged = false
 
@@ -62,12 +63,12 @@ class EditAccount : AppCompatActivity() {
         setContentView(binding.root)
 
         loadOldAccount()
-        checkPermissions()
 
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
                     localURI = uri
+                    avatarTaken = true
                     setImage(uri.toString())
                 }
             }
@@ -101,6 +102,8 @@ class EditAccount : AppCompatActivity() {
         binding.nameEditText.afterChangeWithDebounce{ input ->
             if(input.length in 1..2){
                 binding.nameEditText.error = getString(R.string.name_can_not_have_less_then_3_symbols)
+            } else if(input.contains(Regex("\\d"))){
+                binding.nameEditText.error = getString(R.string.name_can_t_have_numbers)
             }else{
                 binding.passwordEditText.error = null
             }
@@ -109,6 +112,8 @@ class EditAccount : AppCompatActivity() {
         binding.surnameEditText.afterChangeWithDebounce{ input ->
             if(input.length in 1..2){
                 binding.surnameEditText.error = getString(R.string.surname_can_not_have_less_then_3_symbols)
+            } else if(input.contains(Regex("\\d"))){
+                binding.surnameEditText.error = getString(R.string.surname_can_t_have_numbers)
             }else{
                 binding.passwordEditText.error = null
             }
@@ -116,9 +121,9 @@ class EditAccount : AppCompatActivity() {
 
         binding.submitButton.setOnClickListener{
             if (inputIsValid()) {
-                var nameHere : String = ""
-                var surnameHere : String = ""
-                var passwordHere : String = ""
+                var nameHere = ""
+                var surnameHere = ""
+                var passwordHere = ""
 
                 with(binding) {
                     nameHere = if (nameEditText.text!!.isNotEmpty()) { nameEditText.text.toString() } else { name }
@@ -128,10 +133,10 @@ class EditAccount : AppCompatActivity() {
 
                 if (avatarIsChanged || avatar == "") {
                     startLoading()
-                    viewModel.edit(this, login, nameHere, surnameHere, passwordHere, localURI.toString())
+                    viewModel.edit(this, this, login, nameHere, surnameHere, passwordHere, localURI.toString())
                 } else {
                     startLoading()
-                    viewModel.edit(this, login, nameHere, surnameHere, passwordHere, avatar)
+                    viewModel.edit(this, this, login, nameHere, surnameHere, passwordHere, avatar)
                 }
 
                 viewModel.editState.observe(this){ avatarResult ->
@@ -170,12 +175,6 @@ class EditAccount : AppCompatActivity() {
         }
     }
 
-    private fun checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_PERMISSION)
-        }
-    }
-
     private fun inputIsValid():Boolean{
         return (binding.passwordEditText.text!!.length >= 6 || binding.passwordEditText.text!!.isEmpty()
                 && namesAreValid())
@@ -185,7 +184,7 @@ class EditAccount : AppCompatActivity() {
         val namesRegex = Regex("^\\p{L}+$")
         val name = binding.nameEditText.text.toString().trim()
         val surname = binding.surnameEditText.text.toString().trim()
-        return ((name.length >= 3 && name.matches(namesRegex)) || name.isEmpty()) && ((surname.trim().length >= 3 && surname.matches(namesRegex)) || surname.isEmpty())
+        return ((name.length >= 3 && name.matches(namesRegex) && !name.contains(Regex("\\d"))) || name.isEmpty()) && ((surname.trim().length >= 3 && surname.matches(namesRegex) && !surname.contains(Regex("\\d"))) || surname.isEmpty())
     }
 
 
@@ -203,10 +202,17 @@ class EditAccount : AppCompatActivity() {
     }
 
     private fun setImage(uri: String) {
-        Glide.with(this)
-            .load(uri)
-            .circleCrop()
-            .into(binding.avatar)
+        if (avatarTaken) {
+            Glide.with(this)
+                .load(compressor.compressImage(this, uri.toUri()))
+                .circleCrop()
+                .into(binding.avatar)
+        }else{
+            Glide.with(this)
+                .load(uri)
+                .circleCrop()
+                .into(binding.avatar)
+        }
     }
     private fun updateAccInfoInSupabase(authorAvatar: String?){
         var newName = name
@@ -251,7 +257,4 @@ class EditAccount : AppCompatActivity() {
         })
     }
 
-    companion object {
-        private const val REQUEST_CODE_PERMISSION = 100
-    }
 }

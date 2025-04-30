@@ -19,15 +19,16 @@
             android:background="@android:color/transparent"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            android:paddingVertical="5dp"
             app:navigationIcon="@drawable/back_button_resize">
+
             <TextView
+                android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/create_activity_title"
                 android:layout_gravity="center"
-                android:id="@+id/toolbar_title"
-                android:textAppearance="@style/ToolBarStyle"/>
+                android:text="@string/create_activity_title"
+                android:textColor="@color/black"
+                android:textAppearance="@style/ToolBarStyle" />
 
 
         </androidx.appcompat.widget.Toolbar>
@@ -51,14 +52,31 @@
             android:layout_gravity="center_horizontal"
             android:text="Author"/>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/name_switch"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/use_name_and_surname"
-            android:buttonTint="@color/primaryColor"
-            android:textColor="@color/gray" />
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/name_checkbox_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/use_name_and_surname"
+                android:textColor="@color/gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="3dp"/>
+            <CheckBox
+                android:id="@+id/name_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/name_checkbox_text"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/title_textInpLayout"
@@ -82,7 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="200dp"
-            style="@style/TextInputLayout"
+            style="@style/TextInputLayout2"
             android:layout_marginHorizontal="13dp"
             android:layout_marginBottom="20dp">
 
@@ -109,7 +127,7 @@
                 android:text="@string/add_tag"
                 app:layout_constraintEnd_toStartOf="@id/clearTagsButton"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/tagsRV" />
 
             <Button
                 android:id="@+id/clearTagsButton"
@@ -118,7 +136,7 @@
                 android:layout_height="40dp"
                 app:layout_constraintStart_toEndOf="@id/addTagButton"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tagsRV"
                 android:text="@string/clear"/>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -130,7 +148,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/addTagButton" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -160,6 +178,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                android:text="@string/click_here_to_see_the_location"
                 app:layout_constraintTop_toBottomOf="@id/addLocationButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>

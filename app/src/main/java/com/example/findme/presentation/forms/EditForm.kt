@@ -12,13 +12,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.findme.R
 import com.example.findme.databinding.ActivityEditFormBinding
 import com.example.findme.presentation.MainActivity
 import com.example.findme.presentation.forms.adapter.TagsAdapter
 import com.example.findme.presentation.locationMap.MapActivity
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -44,7 +48,11 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityEditFormBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.tagsRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.tagsRV.layoutManager = FlexboxLayoutManager(this).apply {
+            flexWrap = FlexWrap.WRAP // Перенос элементов на новую строку
+            flexDirection = FlexDirection.ROW // Расположение по строкам
+            justifyContent = JustifyContent.FLEX_START // Выравнивание слева направо
+        }
 
         viewModel.formEditingResult.observe(this){ result ->
             if(result == true){
@@ -75,7 +83,8 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
                 longitude = result.data?.getStringExtra(MapActivity.LONGITUDE_KEY)
                 latitude = result.data?.getStringExtra(MapActivity.LATITUDE_KEY)
             }
-
+            if (longitude == "0.0") { longitude = null }
+            if (latitude == "0.0") { latitude = null }
             updateUI()
         }
 
@@ -139,6 +148,9 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
         binding.addLocationButton.setOnClickListener{
             mapResultLauncher.launch(Intent(this, MapActivity::class.java))
         }
+        binding.selectedCoordinates.setOnClickListener {
+            openMaps(latitude!!.toDouble(), longitude!!.toDouble())
+        }
 
         binding.saveButton.setOnClickListener{
             editForm()
@@ -164,10 +176,9 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
             binding.tagsRV.visibility = View.GONE
         }
 
-        if(longitude != null && latitude != null){
+        if((longitude != "0.0" && latitude != "0.0") && (longitude != null && latitude != null)){
             binding.clearLocationButton.isEnabled = true
             binding.selectedCoordinates.visibility = View.VISIBLE
-            binding.selectedCoordinates.text = getString(R.string.longitude_latitude, longitude, latitude)
         }else{
             binding.clearLocationButton.isEnabled = false
             binding.selectedCoordinates.visibility = View.GONE
@@ -237,5 +248,28 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
         binding.loadingBar.visibility = View.GONE
         binding.saveButton.isEnabled = true
         binding.deleteButton.isEnabled = true
+    }
+
+    private fun openMaps(latitude: Double, longitude: Double) {
+        val googleMapsUri = "geo:$latitude,$longitude?q=$latitude,$longitude".toUri()
+        val googleMapsIntent = Intent(Intent.ACTION_VIEW, googleMapsUri)
+        googleMapsIntent.setPackage("com.google.android.apps.maps")
+
+        if (googleMapsIntent.resolveActivity(packageManager) != null) {
+            startActivity(googleMapsIntent)
+        } else {
+            openYandexMaps(latitude, longitude)
+        }
+    }
+
+    private fun openYandexMaps(latitude: Double, longitude: Double) {
+        val yandexMapsUri = "yandexmaps://maps.yandex.ru/?pt=$longitude,$latitude&z=12".toUri()
+        val yandexMapsIntent = Intent(Intent.ACTION_VIEW, yandexMapsUri)
+
+        if (yandexMapsIntent.resolveActivity(packageManager) != null) {
+            startActivity(yandexMapsIntent)
+        } else {
+            Toast.makeText(this, getString(R.string.download_google_maps), Toast.LENGTH_SHORT).show()
+        }
     }
 }

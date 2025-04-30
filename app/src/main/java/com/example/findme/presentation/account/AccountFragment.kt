@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.account_fb.other.ErrorStates
 import com.example.findme.R
@@ -21,15 +20,16 @@ import com.example.findme.databinding.FragmentAccountBinding
 import com.example.findme.other.OnDataClearListener
 import com.example.findme.presentation.FavouritesVM
 import com.example.findme.presentation.MainActivity
-import com.example.findme.presentation.forms.EditForm
-import com.example.findme.presentation.forms.FormActivity
 import com.example.findme.presentation.forms.FormsVM
-import com.example.findme.presentation.forms.adapter.FormsAdapter
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import kotlin.getValue
 import androidx.core.content.edit
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
+import com.example.findme.presentation.forms.ExtraFormsActivity
 
 /**
  * Fragment для просмотра и действия с аккаунтом пользователя
@@ -52,8 +52,7 @@ class AccountFragment : Fragment() {
 
     private var dataClearListener: OnDataClearListener? = null
 
-    private var myIsExpanded = false
-    private var favIsExpanded = false
+    private var isDeleting = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -86,38 +85,6 @@ class AccountFragment : Fragment() {
         binding.accountName.text = "$accName $accSurname"
         binding.accountLogin.text = accLogin
 
-        binding.settingsButton.setOnClickListener{
-            binding.drawerLayout.openDrawer(GravityCompat.END)
-        }
-
-        val preferences = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val isDarkTheme = preferences.getBoolean("dark_theme", false)
-        AppCompatDelegate.setDefaultNightMode(
-            if (isDarkTheme) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-        )
-        binding.themeSwitch.isChecked = isDarkTheme
-
-        binding.themeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-            preferences.edit() { putBoolean("dark_theme", isChecked) }
-        }
-
-        binding.btnEnglish.setOnClickListener {
-            setLocale("en") // Устанавливаем английский как пользовательский выбор
-        }
-
-        binding.btnRussian.setOnClickListener {
-            setLocale("ru") // Устанавливаем русский как пользовательский выбор
-        }
-
-
-
-
-
         viewModel2.error.observe(viewLifecycleOwner){ result ->
             if(result == ErrorStates.ERROR){
                 Toast.makeText(requireContext(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
@@ -126,43 +93,10 @@ class AccountFragment : Fragment() {
             }
         }
 
-        favVM.getAllList()
-        favVM.favForms.observe(viewLifecycleOwner){ result ->
-            if(result != null) {
-                if (result.isNotEmpty()) {
-                    viewModel.favouriteForms(requireContext(), result)
-                }else{
-                    binding.favouriteFormsRV.visibility = View.GONE
-                }
-            }
-        }
-
-        binding.favouriteFormsRV.layoutManager = LinearLayoutManager(requireContext())
-        viewModel.favouriteForms.observe(viewLifecycleOwner){ result ->
-            if (result != null) {
-                binding.favouriteFormsRV.adapter = FormsAdapter(requireContext(), result) { selectedItem ->
-                    val intent = Intent(requireContext(), FormActivity::class.java)
-                    intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
-                    intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
-                    intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
-                    intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
-                    intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
-                    intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.authorAvatar)
-                    intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
-                    intent.putExtra(FormActivity.KEY_FAVOURITE, true)
-                    startActivity(intent)
-                }
-            }
-        }
-
         binding.favouriteForms.setOnClickListener{
-            if(favIsExpanded){
-                binding.favouriteFormsRV.visibility = View.GONE
-                favIsExpanded = false
-            }else{
-                binding.favouriteFormsRV.visibility = View.VISIBLE
-                favIsExpanded = true
-            }
+            val intent = Intent(requireContext(), ExtraFormsActivity::class.java)
+            intent.putExtra(ExtraFormsActivity.KEY, ExtraFormsActivity.FAVOURITE)
+            startActivity(intent)
         }
 
         if (accAvatar != "" && accAvatar != "null"){
@@ -176,35 +110,13 @@ class AccountFragment : Fragment() {
             showAlertDialog()
         }
 
-        viewModel.getAccountForms(requireContext(), accLogin.toString())
-        viewModel.forms.observe(viewLifecycleOwner){ forms ->
-            if (forms != null) {
-                binding.myFormsRV.adapter = FormsAdapter(requireContext(), forms) { selectedItem ->
-                    val intent = Intent(requireContext(), EditForm::class.java)
-                    intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
-                    intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
-                    intent.putExtra(FormActivity.KEY_DESCRIPTION, selectedItem.description)
-                    intent.putExtra(FormActivity.KEY_TAGS, listFormToBasic(selectedItem.tags))
-                    intent.putExtra(FormActivity.KEY_AUTHOR, selectedItem.author)
-                    intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.authorAvatar)
-                    intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
-                    intent.putExtra(FormActivity.KEY_LOGIN, selectedItem.authorLogin)
-                    intent.putExtra(MainActivity.KEY_NAME, accName)
-                    intent.putExtra(MainActivity.KEY_SURNAME, accSurname)
-                    startActivity(intent)
-                }
-            }
-        }
-        binding.myFormsRV.layoutManager = LinearLayoutManager(requireContext())
-
         binding.myForms.setOnClickListener{
-            if(myIsExpanded){
-                binding.myFormsRV.visibility = View.GONE
-                myIsExpanded = false
-            }else{
-                binding.myFormsRV.visibility = View.VISIBLE
-                myIsExpanded = true
-            }
+            val intent = Intent(requireContext(), ExtraFormsActivity::class.java)
+            intent.putExtra(ExtraFormsActivity.KEY, ExtraFormsActivity.MY_FORMS)
+            intent.putExtra(ExtraFormsActivity.LOGIN, accLogin)
+            intent.putExtra(ExtraFormsActivity.NAME, accName)
+            intent.putExtra(ExtraFormsActivity.SURNAME, accSurname)
+            startActivity(intent)
         }
 
         binding.editButton.setOnClickListener{
@@ -263,6 +175,7 @@ class AccountFragment : Fragment() {
             viewModel2.deleteAccount(viewLifecycleOwner, accLogin.toString())
             binding.deleteAccount.isEnabled = false
             binding.deletingProgressBar.visibility = View.VISIBLE
+            isDeleting = true
             dialog.dismiss()
         }
         builder.setNegativeButton(getString(R.string.back)) { dialog, _ ->
@@ -272,30 +185,24 @@ class AccountFragment : Fragment() {
         alertDialog.show()
     }
 
-    private fun listFormToBasic(input: List<String>): String{
-        if (input.isEmpty()) return ""
-        return input.joinToString(" ")
-    }
-
-
-    private fun setLocale(lang: String) {
-        val myLocale = Locale(lang)
-        Locale.setDefault(myLocale)
-
-        val resources = resources
-        val configuration = resources.configuration
-        configuration.setLocale(myLocale)
-        resources.updateConfiguration(configuration, resources.displayMetrics)
-
-        val preferences = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-        preferences.edit().putString("language", lang).apply()
-
-        requireActivity().recreate()
-    }
-
     override fun onResume() {
         super.onResume()
         viewModel.getAccountForms(requireContext(), accLogin.toString())
         favVM.getAllList()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isDeleting){
+            val inputData = workDataOf(
+                DelContinueWorker.LOGIN_FOR_WORKER to accLogin,
+            )
+
+            val workRequest = OneTimeWorkRequestBuilder<DelContinueWorker>()
+                .setInputData(inputData)
+                .build()
+
+            WorkManager.getInstance(requireContext()).enqueue(workRequest)
+        }
     }
 }

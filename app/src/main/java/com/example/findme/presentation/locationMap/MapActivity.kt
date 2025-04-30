@@ -47,15 +47,17 @@ class MapActivity : AppCompatActivity() {
     private var longitude = 0.0
     private var marker: Marker? = null
 
+    private var permis = false
+
     private val launcher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { map ->
         if (map.values.isNotEmpty() && map.values.all { it }) {
-            startLocation()
+            permis = true
         }
     }
 
-    val overlay = object : Overlay() {
+    private val overlay = object : Overlay() {
         override fun onSingleTapConfirmed(e: MotionEvent, mapView: MapView): Boolean {
             val projection = mapView.projection
             val geoPoint = projection.fromPixels(e.x.toInt(), e.y.toInt()) as GeoPoint
@@ -89,15 +91,22 @@ class MapActivity : AppCompatActivity() {
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
         binding.mapView.controller.setZoom(5.0)
 
+        checkPermissions()
+
         binding.centerButton.setOnClickListener {
-            startLocation()
-            if (isLocationEnabled()) {
-                if (latitude == 0.0 && longitude == 0.0) {
-                    binding.mapView.controller.setZoom(5.0)
+            if (permis) {
+                startLocation()
+                if (isLocationEnabled()) {
+                    if (latitude == 0.0 && longitude == 0.0) {
+                        binding.mapView.controller.setZoom(5.0)
+                    }
+                } else {
+                    Toast.makeText(this, getString(R.string.turn_on_geolocation), Toast.LENGTH_LONG).show()
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 }
-            } else {
-                Toast.makeText(this, getString(R.string.turn_on_geolocation), Toast.LENGTH_LONG).show()
-                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }else{
+                Toast.makeText(this, getString(R.string.allow_use_of_geolocation), Toast.LENGTH_SHORT).show()
+                checkPermissions()
             }
         }
 
@@ -114,7 +123,6 @@ class MapActivity : AppCompatActivity() {
             setResult(RESULT_OK, resultIntent)
             finish()
         }
-        checkPermissions()
     }
 
     override fun onResume() {
@@ -142,6 +150,8 @@ class MapActivity : AppCompatActivity() {
                 ) != PackageManager.PERMISSION_GRANTED
             }) {
             launcher.launch(REQUIRED_PERMISSION)
+        }else{
+            permis = true
         }
     }
 

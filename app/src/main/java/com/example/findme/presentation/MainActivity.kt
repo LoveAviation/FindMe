@@ -1,26 +1,34 @@
 package com.example.findme.presentation
 
-import android.content.ContentValues.TAG
+
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.graphics.PorterDuff.Mode
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.findme.R
 import com.example.findme.databinding.ActivityMainBinding
 import com.example.findme.other.OnDataClearListener
 import com.example.findme.other.SaveDataClass
+import com.example.findme.presentation.account.AccountVM
 import com.example.findme.presentation.account.RegistrationActivity
 import com.example.findme.presentation.forms.CreateFormActivity
+import com.example.findme.presentation.forms.FormsVM
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
+import kotlin.getValue
 
 /**
  * Главный класс
@@ -37,6 +45,18 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
     private lateinit var navController : NavController
     private val accData  = SaveDataClass()
 
+    private var userChecked = false
+
+    private val viewModel : AccountVM by viewModels()
+    private val viewModel2 : FormsVM by viewModels()
+
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val message = intent?.getStringExtra("message")
+            if(message == "deleted") clearUserData()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,9 +64,11 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         val preferences = getSharedPreferences("settings", MODE_PRIVATE)
-        val isDarkTheme = preferences.getBoolean("dark_theme", false)
+        val theme = preferences.getString("theme", "def")
         AppCompatDelegate.setDefaultNightMode(
-            if (isDarkTheme) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            if (theme == "dark") AppCompatDelegate.MODE_NIGHT_YES
+            else if (theme == "light") AppCompatDelegate.MODE_NIGHT_NO
+            else AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         )
         setContentView(binding.root)
 
@@ -62,25 +84,61 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
         accData.accAvatar = intent?.getStringExtra(KEY_AVATAR) ?:  sharPref.getString(KEY_AVATAR, null)
         btnSelected = sharPref.getInt(KEY, 1)
         chooseBotBar(btnSelected)
+        if(accData.accLogin != null){
+            var login : String = accData.accLogin!!
+            viewModel.checkUser(this, login)
+            viewModel.checkState.observe(this){ result ->
+                if (result == false){
+                    viewModel.deleteAccount(this, login)
+                    viewModel.deletingState.observe(this){ state ->
+                        if(state == true){
+                            viewModel2.deleteAllForms(this, login)
+                            viewModel2.formDeletingResult.observe(this) { value ->
+                                if (value == true) { clearUserData(); userChecked = true }
+                            }
+                        }
+                    }
+                }else{
+                    userChecked = true
+                }
+            }
+        }else{
+            userChecked = true
+        }
+
+        val filter = IntentFilter("com.example.broadcast.MY_NOTIFICATION")
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
 
         binding.searchButton.setOnClickListener{ chooseBotBar(1) }
         binding.createButton.setOnClickListener {
             if(accData.accName == null && accData.accSurname == null){
                 goToRegistration()
             }else{
-                var intent = Intent(this, CreateFormActivity::class.java).apply {
-                    putExtra(KEY_LOGIN, accData.accLogin)
-                    putExtra(KEY_NAME, accData.accName)
-                    putExtra(KEY_SURNAME, accData.accSurname)
-                    putExtra(KEY_AVATAR, accData.accAvatar)
+                if (userChecked) {
+                    var intent = Intent(this, CreateFormActivity::class.java).apply {
+                        putExtra(KEY_LOGIN, accData.accLogin)
+                        putExtra(KEY_NAME, accData.accName)
+                        putExtra(KEY_SURNAME, accData.accSurname)
+                        putExtra(KEY_AVATAR, accData.accAvatar)
+                    }
+                    startActivity(intent)
+                }else{
+                    Toast.makeText(this, getString(R.string.checking_in_progress_please_wait), Toast.LENGTH_SHORT).show()
                 }
-                startActivity(intent)
             }
         }
         binding.accountButton.setOnClickListener{
-            chooseBotBar(3)
+            if (userChecked) {
+                chooseBotBar(3)
+            }else{
+                Toast.makeText(this, getString(R.string.checking_in_progress_please_wait), Toast.LENGTH_SHORT).show()
+            }
         }
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 
     private fun chooseBotBar(fragment: Int) {
@@ -161,8 +219,6 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
         val preferences = getSharedPreferences("settings", MODE_PRIVATE)
         val languageCode = preferences.getString("language", Locale.getDefault().language) ?: Locale.getDefault().language
 
-        Log.d(TAG, "HEREEEEEEE $languageCode")
-
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
 
@@ -171,6 +227,7 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
         resources.updateConfiguration(config, resources.displayMetrics)
     }
 
+
     companion object{
         const val KEY = "selected bottom bar button"
         const val KEY_LOGIN = "Login"
@@ -178,6 +235,8 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
         const val KEY_NAME = "Name"
         const val KEY_SURNAME = "Surname"
         const val KEY_AVATAR = "AvatarUrl"
+
+        var instance: MainActivity? = null
     }
 
 }

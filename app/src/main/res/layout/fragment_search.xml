@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.forms.SearchFragment">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_layout"
@@ -13,7 +18,7 @@
         app:layout_constraintEnd_toStartOf="@id/filters_button"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="13dp"
+        android:layout_marginStart ="13dp"
         android:hint="@string/search_forms"
         style="@style/TextInputLayoutRoundedBox"
         app:layout_constraintTop_toTopOf="parent"
@@ -32,8 +37,8 @@
 
     <ImageButton
         android:id="@+id/filters_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:contentDescription="@string/filters_button"
         android:src="@drawable/filters_button"
         android:background="@android:color/transparent"
@@ -41,120 +46,152 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/search_layout"
         app:layout_constraintBottom_toBottomOf="@id/search_layout"
-        android:layout_marginEnd="13dp"/>
+        app:layout_constraintStart_toEndOf="@id/search_layout"
+        app:layout_constraintEnd_toStartOf="@id/settingsButton"
+        android:layout_marginStart="5dp"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/filters_layout"
+    <ImageButton
+        android:id="@+id/settingsButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/edit_account_button"
+        android:scaleType="centerCrop"
+        android:src="@drawable/settings_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/search_layout"
+        app:layout_constraintBottom_toBottomOf="@id/search_layout"
+        app:layout_constraintStart_toEndOf="@id/filters_button"
+        android:layout_marginStart="5dp"/>
+
+    <FrameLayout
+        android:id="@+id/filters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_marginHorizontal="13dp"
         app:layout_constraintTop_toBottomOf="@id/search_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-        <Button
-            android:id="@+id/addTagButton"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            app:layout_constraintEnd_toStartOf="@id/clearTagsButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@string/add_tag_to_find"/>
 
-        <Button
-            android:id="@+id/clearTagsButton"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            app:layout_constraintStart_toEndOf="@id/addTagButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@string/clear"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tagsRV"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/filters_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addTagButton" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/locationFilterSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/addLocationButton"
+            android:visibility="gone"
+            android:background="@drawable/filters_border"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="6dp"
+            app:layout_constraintTop_toBottomOf="@id/search_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="@string/filter_by_location"
-            app:layout_constraintTop_toBottomOf="@id/tagsRV"/>
+            android:layout_marginTop="10dp">
+            <Button
+                android:id="@+id/addTagButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                app:layout_constraintEnd_toStartOf="@id/clearTagsButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/add_tag_to_find"/>
 
-        <Button
-            android:id="@+id/addLocationButton"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/clearLocationButton"
-            app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
-            android:text="@string/add_location_to_sort"/>
+            <Button
+                android:id="@+id/clearTagsButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                app:layout_constraintStart_toEndOf="@id/addTagButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/clear"/>
 
-        <Button
-            android:id="@+id/clearLocationButton"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@id/addLocationButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
-            android:text="@string/clear_location"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tagsRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/addTagButton" />
 
-        <TextView
-            android:id="@+id/selected_coordinates"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="@string/you_haven_t_selected_coordinates"
-            app:layout_constraintTop_toBottomOf="@id/addLocationButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/locationFilterSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/addLocationButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/filter_by_location"
+                app:layout_constraintTop_toBottomOf="@id/tagsRV"/>
 
-        <TextView
-            android:id="@+id/radius_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/selected_coordinates"
-            android:text="@string/radius"
-            android:textSize="20sp"
-            android:visibility="gone"
-            android:layout_marginTop="5dp"
-            android:layout_marginStart="10dp"/>
-        <Button
-            android:id="@+id/radius_button"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="10"
-            android:padding="0dp"
-            android:textSize="20sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@id/radius_text"
-            app:layout_constraintTop_toBottomOf="@id/selected_coordinates"
-            android:layout_marginStart="10dp"/>
-        <TextView
-            android:id="@+id/radius_text2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/km"
-            android:textSize="20sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@id/radius_button"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            app:layout_constraintTop_toBottomOf="@id/selected_coordinates" />
+            <Button
+                android:id="@+id/addLocationButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/clearLocationButton"
+                app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
+                android:text="@string/add_location_to_sort"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/clearLocationButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/addLocationButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
+                android:text="@string/clear_location"/>
+
+            <TextView
+                android:id="@+id/selected_coordinates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="@string/you_haven_t_selected_coordinates"
+                app:layout_constraintTop_toBottomOf="@id/addLocationButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/radius_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/selected_coordinates"
+                android:text="@string/radius"
+                android:textSize="20sp"
+                android:visibility="gone"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"/>
+            <Button
+                android:id="@+id/radius_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="10"
+                android:padding="0dp"
+                android:textSize="20sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/radius_text"
+                app:layout_constraintTop_toBottomOf="@id/selected_coordinates"
+                android:layout_marginStart="10dp"/>
+            <TextView
+                android:id="@+id/radius_text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/km"
+                android:textSize="20sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/radius_button"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintTop_toBottomOf="@id/selected_coordinates" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchResultView"
@@ -164,7 +201,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filters_layout"/>
+        app:layout_constraintTop_toBottomOf="@+id/filters"
+        android:layout_marginVertical="10dp"/>
 
     <ProgressBar
         android:id="@+id/loading_bar"
@@ -185,4 +223,77 @@
         app:layout_constraintBottom_toBottomOf="@id/searchResultView"
         app:layout_constraintStart_toStartOf="@id/searchResultView"
         app:layout_constraintEnd_toEndOf="@id/searchResultView"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+<LinearLayout
+android:id="@+id/sidePanel"
+android:layout_width="280dp"
+android:layout_height="match_parent"
+android:layout_gravity="end"
+android:orientation="vertical"
+android:background="@color/white">
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/app_theme"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="40dp"/>
+<!-- Переключатель темы -->
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="10dp"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/btnDarkTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dark" />
+
+    <Button
+        android:id="@+id/btnLightTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/light" />
+</LinearLayout>
+<Button
+    android:id="@+id/default_theme"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/set_default"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="10dp" />
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="40dp"
+    android:text="@string/language"/>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="10dp"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/btnEnglish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/en" />
+
+    <Button
+        android:id="@+id/btnRussian"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/ru" />
+</LinearLayout>
+</LinearLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>

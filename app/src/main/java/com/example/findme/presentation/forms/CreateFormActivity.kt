@@ -14,13 +14,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.findme.R
 import com.example.findme.databinding.ActivityCreateFormBinding
 import com.example.findme.presentation.MainActivity
 import com.example.findme.presentation.forms.adapter.TagsAdapter
 import com.example.findme.presentation.locationMap.MapActivity
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +58,11 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
         binding = ActivityCreateFormBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.tagsRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.tagsRV.layoutManager = FlexboxLayoutManager(this).apply {
+            flexWrap = FlexWrap.WRAP // Перенос элементов на новую строку
+            flexDirection = FlexDirection.ROW // Расположение по строкам
+            justifyContent = JustifyContent.FLEX_START // Выравнивание слева направо
+        }
 
         accName = intent.getStringExtra(MainActivity.KEY_NAME).toString()
         accSurname = intent.getStringExtra(MainActivity.KEY_SURNAME).toString()
@@ -69,14 +77,8 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
             if (result.resultCode == RESULT_OK) {
                 longitude = result.data?.getStringExtra(MapActivity.LONGITUDE_KEY)
                 latitude = result.data?.getStringExtra(MapActivity.LATITUDE_KEY)
-            }
-
-            if(longitude != "0.0" && latitude != "0.0"){
-                binding.selectedCoordinates.visibility = View.VISIBLE
-                binding.selectedCoordinates.text = getString(R.string.longitude_latitude, longitude, latitude)
-            }else{
-                binding.selectedCoordinates.text = ""
-                binding.selectedCoordinates.visibility = View.GONE
+                if (longitude == "0.0") { longitude = null }
+                if (latitude == "0.0") { latitude = null }
             }
             updateUI()
         }
@@ -90,8 +92,9 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
 
         binding.author.text = accLogin
 
-        binding.nameSwitch.setOnCheckedChangeListener{ _, isActivated ->
-            if(isActivated){
+
+        binding.nameCheckbox.setOnClickListener {
+            if (binding.nameCheckbox.isChecked){
                 binding.author.text = "$accName $accSurname"
                 author = "$accName $accSurname"
             }else{
@@ -139,9 +142,11 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
         binding.clearLocationButton.setOnClickListener{
             longitude = null
             latitude = null
-            binding.selectedCoordinates.text = ""
-            binding.selectedCoordinates.visibility = View.GONE
             updateUI()
+        }
+
+        binding.selectedCoordinates.setOnClickListener {
+            openMaps(latitude!!.toDouble(), longitude!!.toDouble())
         }
 
         binding.createButton.setOnClickListener{
@@ -226,10 +231,35 @@ class CreateFormActivity : AppCompatActivity(), TagsAdapter.OnButtonClickListene
             binding.tagsRV.visibility = View.GONE
             binding.clearTagsButton.isEnabled = false
         }
-        if(longitude != null && latitude != null){
+        if((longitude != "0.0" && latitude != "0.0") && (longitude != null && latitude != null)){
             binding.clearLocationButton.isEnabled = true
+            binding.selectedCoordinates.visibility = View.VISIBLE
         }else{
             binding.clearLocationButton.isEnabled = false
+            binding.selectedCoordinates.visibility = View.GONE
+        }
+    }
+
+    private fun openMaps(latitude: Double, longitude: Double) {
+        val googleMapsUri = "geo:$latitude,$longitude?q=$latitude,$longitude".toUri()
+        val googleMapsIntent = Intent(Intent.ACTION_VIEW, googleMapsUri)
+        googleMapsIntent.setPackage("com.google.android.apps.maps")
+
+        if (googleMapsIntent.resolveActivity(packageManager) != null) {
+            startActivity(googleMapsIntent)
+        } else {
+            openYandexMaps(latitude, longitude)
+        }
+    }
+
+    private fun openYandexMaps(latitude: Double, longitude: Double) {
+        val yandexMapsUri = "yandexmaps://maps.yandex.ru/?pt=$longitude,$latitude&z=12".toUri()
+        val yandexMapsIntent = Intent(Intent.ACTION_VIEW, yandexMapsUri)
+
+        if (yandexMapsIntent.resolveActivity(packageManager) != null) {
+            startActivity(yandexMapsIntent)
+        } else {
+            Toast.makeText(this, getString(R.string.download_google_maps), Toast.LENGTH_SHORT).show()
         }
     }
 }

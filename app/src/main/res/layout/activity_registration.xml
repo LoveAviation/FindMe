@@ -12,30 +12,36 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/registration_toolbar"
-            android:layout_width="match_parent"
+        android:id="@+id/registration_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/back_button_resize">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:paddingVertical="5dp"
-            android:theme="?attr/actionBarTheme"
-            app:buttonGravity="center_vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/back_button_resize"
-            app:title="@string/sign_up"
-            app:titleTextAppearance="@style/ToolBarStyle" />
+            android:layout_gravity="center"
+            android:text="@string/sign_up"
+            android:textColor="@color/black"
+            android:textAppearance="@style/ToolBarStyle" />
+    </androidx.appcompat.widget.Toolbar>
 
         <LinearLayout
             android:id="@+id/submain_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/registration_toolbar">
+            app:layout_constraintTop_toBottomOf="@id/registration_toolbar"
+            android:layout_marginTop="35dp">
 
             <ImageView
                 android:id="@+id/avatar"
@@ -52,6 +58,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/click_to_choose_avatar" />
+
+            <Button
+                android:id="@+id/clear_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingHorizontal="50dp"
+                android:text="@string/clear"
+                android:textSize="20sp"/>
 
             <TextView
                 android:id="@+id/login_text"
@@ -70,16 +85,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                app:layout_constraintBottom_toTopOf="@id/password_text"
+                style="@style/TextInputLayout3"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/password_text">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/login_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/enter_your_login"
                     android:imeOptions="actionNext"
+                    android:hint="@string/enter_your_login"
                     android:inputType="text"
                     android:maxLength="50"
                     android:maxLines="1" />
@@ -103,6 +119,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
+                style="@style/TextInputLayout3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/password_text">
@@ -111,10 +128,10 @@
                     android:id="@+id/password_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/enter_your_password"
                     android:imeOptions="actionNext"
-                    android:maxLength="15"
+                    android:hint="@string/enter_your_password"
                     android:inputType="textPassword"
+                    android:maxLength="15"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -135,6 +152,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
+                style="@style/TextInputLayout3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/name_text">
@@ -143,10 +161,10 @@
                     android:id="@+id/name_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/enter_your_name"
                     android:imeOptions="actionNext"
-                    android:maxLength="30"
+                    android:hint="@string/enter_your_name"
                     android:inputType="text"
+                    android:maxLength="30"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -167,6 +185,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
+                style="@style/TextInputLayout3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/surname_text">
@@ -175,8 +194,8 @@
                     android:id="@+id/surname_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
                     android:hint="@string/enter_your_surname"
-                    android:imeOptions="actionNext"
                     android:maxLength="30"
                     android:inputType="text"
                     android:maxLines="1" />
@@ -197,6 +216,7 @@
             android:layout_height="wrap_content"
             android:text="@string/sign_up"
             android:textSize="18sp"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/submain_layout" />

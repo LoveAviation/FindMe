@@ -1,6 +1,7 @@
 package com.example.findme.presentation.account
 
 
+import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleOwner
@@ -11,6 +12,7 @@ import com.example.account_fb.data.DatabaseUC
 import com.example.account_fb.data.StorageUC
 import com.example.account_fb.entity.Account
 import com.example.account_fb.other.ErrorStates
+import dagger.hilt.android.internal.Contexts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -36,11 +38,11 @@ class AccountVM @Inject constructor(
     private var _deletingState = MutableLiveData<Boolean?>(null)
     val deletingState: LiveData<Boolean?> get() = _deletingState
 
-    fun signIn(lifecycleOwner: LifecycleOwner, login: String, password: String, name: String, surname: String, urlAvatar: Uri?){
+    fun signIn(context: Context, lifecycleOwner: LifecycleOwner, login: String, password: String, name: String, surname: String, urlAvatar: Uri?){
         _signInState.value = null
         waitForError(lifecycleOwner)
         if(urlAvatar != null){
-            storageUC.uploadAvatar(urlAvatar, login)
+            storageUC.uploadAvatar(context, urlAvatar, login)
             storageUC.storageState.observe(lifecycleOwner){ avatarURL ->
                 if (avatarURL != null){
                     databaseUC.signupUser(login, password, name, surname, avatarURL)
@@ -75,10 +77,10 @@ class AccountVM @Inject constructor(
     private var _editState = MutableLiveData<String?>()
     val editState: LiveData<String?> get() = _editState
 
-    fun edit(lifecycleOwner: LifecycleOwner, login: String, name: String, surname: String, password: String, avatar: String?){
+    fun edit(context: Context, lifecycleOwner: LifecycleOwner, login: String, name: String, surname: String, password: String, avatar: String?){
         waitForError(lifecycleOwner)
         if(avatar != "null" && avatar != null && !avatar.startsWith("https://", ignoreCase = true)) {
-            storageUC.changeAvatar(avatar.toUri(), login)
+            storageUC.changeAvatar(context, avatar.toUri(), login)
             storageUC.storageState.observe(lifecycleOwner){ avatarUrl ->
                 if(avatarUrl != null){
                     editAccDB(lifecycleOwner, login, name, surname, password, avatarUrl)
@@ -118,6 +120,19 @@ class AccountVM @Inject constructor(
         storageUC.storageState.observe(lifecycleOwner){ result ->
             if(result == "DELETED"){
                 _deletingState.value = true
+            }
+        }
+    }
+
+    private var _checkState = MutableLiveData<Boolean?>(null)
+    val checkState: LiveData<Boolean?> get() = _checkState
+
+    fun checkUser(lifecycleOwner: LifecycleOwner, login: String) {
+        waitForError(lifecycleOwner)
+        databaseUC.checkUser(login)
+        databaseUC.checkResult.observe(lifecycleOwner){ result ->
+            if(result != null){
+                _checkState.value = result
             }
         }
     }

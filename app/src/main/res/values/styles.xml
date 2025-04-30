@@ -6,17 +6,38 @@
     </style>
     <style name="TextInputLayout">
         <item name="boxStrokeColor">@color/primaryColor</item>
+        <item name="boxCornerRadiusBottomEnd">40dp</item>
+        <item name="boxCornerRadiusBottomStart">40dp</item>
+        <item name="boxCornerRadiusTopEnd">40dp</item>
+        <item name="boxCornerRadiusTopStart">40dp</item>
         <item name="boxStrokeWidth">2dp</item>
     </style>
+    <style name="TextInputLayout2">
+        <item name="boxStrokeColor">@color/primaryColor</item>
+        <item name="boxCornerRadiusBottomEnd">25dp</item>
+        <item name="boxCornerRadiusBottomStart">25dp</item>
+        <item name="boxCornerRadiusTopEnd">25dp</item>
+        <item name="boxCornerRadiusTopStart">25dp</item>
+        <item name="boxStrokeWidth">2dp</item>
+    </style>
+    <style name="TextInputLayout3">
+        <item name="boxStrokeColor">@color/primaryColor</item>
+        <item name="boxCornerRadiusBottomEnd">15dp</item>
+        <item name="boxCornerRadiusBottomStart">15dp</item>
+        <item name="boxCornerRadiusTopEnd">15dp</item>
+        <item name="boxCornerRadiusTopStart">15dp</item>
+        <item name="boxStrokeWidth">2dp</item>
+    </style>
+
     <style name="ToolBarStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">>
         <item name="android:textSize">26sp</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
     <style name="TextInputLayoutRoundedBox">
-        <item name="boxCornerRadiusBottomEnd">20dp</item>
-        <item name="boxCornerRadiusBottomStart">20dp</item>
-        <item name="boxCornerRadiusTopEnd">20dp</item>
-        <item name="boxCornerRadiusTopStart">20dp</item>
+        <item name="boxCornerRadiusBottomEnd">40dp</item>
+        <item name="boxCornerRadiusBottomStart">40dp</item>
+        <item name="boxCornerRadiusTopEnd">40dp</item>
+        <item name="boxCornerRadiusTopStart">40dp</item>
         <item name="boxStrokeWidth">1dp</item>
     </style>
 </resources>
