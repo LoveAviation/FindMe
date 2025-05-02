@@ -174,6 +174,10 @@ class AccountFragment : Fragment() {
         builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
             viewModel2.deleteAccount(viewLifecycleOwner, accLogin.toString())
             binding.deleteAccount.isEnabled = false
+            binding.exitAccount.isEnabled = false
+            binding.myForms.isEnabled = false
+            binding.favouriteForms.isEnabled = false
+            binding.editButton.isEnabled = false
             binding.deletingProgressBar.visibility = View.VISIBLE
             isDeleting = true
             dialog.dismiss()

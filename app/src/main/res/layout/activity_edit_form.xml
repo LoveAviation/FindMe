@@ -50,7 +50,8 @@
             android:textSize="20sp"
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
-            android:text="Author"/>
+            android:text="Author"
+            android:textColor="@color/black" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/name_switch"
@@ -119,7 +120,7 @@
                 app:layout_constraintStart_toEndOf="@id/addTagButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tagsRV"
-                android:text="@string/clear"/>
+                android:text="@string/clear" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/tagsRV"
@@ -144,7 +145,7 @@
                 app:layout_constraintEnd_toStartOf="@id/clearLocationButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:text="@string/change_location"/>
+                android:text="@string/change_location" />
 
             <Button
                 android:id="@+id/clearLocationButton"
@@ -154,13 +155,14 @@
                 app:layout_constraintStart_toEndOf="@id/addLocationButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:text="@string/clear"/>
+                android:text="@string/clear" />
             <TextView
                 android:id="@+id/selected_coordinates"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:text="@string/click_here_to_see_the_location"
+                android:textColor="@color/black"
                 app:layout_constraintTop_toBottomOf="@id/addLocationButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>

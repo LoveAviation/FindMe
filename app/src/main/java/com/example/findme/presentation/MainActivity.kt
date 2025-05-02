@@ -106,6 +106,15 @@ class MainActivity : AppCompatActivity(), OnDataClearListener {
             userChecked = true
         }
 
+        if(!accData.accLogin.isNullOrEmpty()){
+            viewModel.checkAndGetAvatar(this, accData.accLogin.toString())
+            viewModel.getAvatarState.observe(this) { result ->
+                if(result != "null"){
+                    accData.accAvatar = result
+                }
+            }
+        }
+
         val filter = IntentFilter("com.example.broadcast.MY_NOTIFICATION")
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
 

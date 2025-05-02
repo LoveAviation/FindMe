@@ -17,7 +17,7 @@
         android:layout_height="60dp"
         app:layout_constraintEnd_toStartOf="@id/filters_button"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:layout_marginStart ="13dp"
         android:hint="@string/search_forms"
         style="@style/TextInputLayoutRoundedBox"

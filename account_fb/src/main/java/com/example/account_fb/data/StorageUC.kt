@@ -76,12 +76,10 @@ class StorageUC @Inject constructor() {
 
     fun compressImage(context: Context, imageUri: Uri): ByteArray? {
         return try {
-            // Открываем поток, чтобы сначала вытащить EXIF
             val exifInputStream = context.contentResolver.openInputStream(imageUri)
             val exif = exifInputStream?.let { ExifInterface(it) }
             exifInputStream?.close()
 
-            // Получаем угол поворота из EXIF
             val orientation = exif?.getAttributeInt(
                 ExifInterface.TAG_ORIENTATION,
                 ExifInterface.ORIENTATION_NORMAL
@@ -94,12 +92,10 @@ class StorageUC @Inject constructor() {
                 else -> 0f
             }
 
-            // Открываем поток заново для Bitmap
             val imageInputStream = context.contentResolver.openInputStream(imageUri)
             val bitmap = BitmapFactory.decodeStream(imageInputStream)
             imageInputStream?.close()
 
-            // Крутим если надо
             val rotatedBitmap = if (rotationAngle != 0f) {
                 val matrix = Matrix()
                 matrix.postRotate(rotationAngle)
@@ -108,13 +104,28 @@ class StorageUC @Inject constructor() {
                 bitmap
             }
 
-            // Сжимаем
             val outputStream = ByteArrayOutputStream()
             rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
             outputStream.toByteArray()
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    fun getAvatar(login: String){
+        _errorStorage.value = ErrorStates.NULL
+        _storageState.value = null
+
+        val imageRef = storageReference.child("${login}_avatar")
+        imageRef.metadata.addOnSuccessListener {
+            imageRef.downloadUrl.addOnSuccessListener { url ->
+                _storageState.value = url.toString()
+            }.addOnFailureListener{
+                _errorStorage.value = ErrorStates.ERROR
+            }
+        }.addOnFailureListener{
+            _storageState.value = "EMPTY"
         }
     }
 

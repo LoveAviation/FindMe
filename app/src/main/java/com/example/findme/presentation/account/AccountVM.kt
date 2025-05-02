@@ -137,6 +137,21 @@ class AccountVM @Inject constructor(
         }
     }
 
+    private var _getAvatarState = MutableLiveData<String?>()
+    val getAvatarState: LiveData<String?> get() = _getAvatarState
+
+    fun checkAndGetAvatar(lifecycleOwner: LifecycleOwner, login: String){
+        waitForError(lifecycleOwner)
+        storageUC.getAvatar(login)
+        storageUC.storageState.observe(lifecycleOwner){ result ->
+            if(result == "EMPTY"){
+                _getAvatarState.value = "null"
+            }else if(!result.isNullOrEmpty()){
+                _getAvatarState.value = result
+            }
+        }
+    }
+
     private fun waitForError(lifecycleOwner: LifecycleOwner) {
         _error.value = ErrorStates.NULL
         storageUC.errorStorage.observe(lifecycleOwner){ error ->

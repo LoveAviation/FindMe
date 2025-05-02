@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Основные цвета -->
-    <color name="primaryColor">#FF5722</color> <!-- новый основной цвет -->
-    <color name="primaryDarkColor">#E64A19</color> <!-- темный основной цвет -->
-    <color name="accentColor">#FFC107</color> <!-- новый цвет акцента -->
+    <color name="primaryColor">#1E387F</color> <!-- новый основной цвет -->
+    <color name="primaryDarkColor">#15275A</color> <!-- темный основной цвет -->
+    <color name="accentColor">#3468F6</color> <!-- новый цвет акцента -->
 
     <color name="black">#FFFFFFFF</color>
     <color name="white">#FF000000</color>
-    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#E64A19</color>
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#15275A</color>
     <color name="gray">#808080</color>
     <color name="red">#FF0000</color>
 </resources>
