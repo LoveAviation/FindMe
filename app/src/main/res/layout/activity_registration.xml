@@ -67,6 +67,7 @@
                 android:layout_gravity="center"
                 android:paddingHorizontal="50dp"
                 android:text="@string/clear"
+                android:textColor="@color/always_white"
                 android:textSize="20sp"/>
 
             <TextView
@@ -219,6 +220,7 @@
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/always_white"
             android:text="@string/sign_up"
             android:textSize="18sp"
             android:layout_marginTop="16dp"
@@ -230,6 +232,7 @@
             android:id="@+id/change_registration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/always_white"
             android:text="@string/already_have_an_account"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -94,6 +94,7 @@
                 app:layout_constraintEnd_toStartOf="@id/clearTagsButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/always_white"
                 android:text="@string/add_tag_to_find"/>
 
             <Button
@@ -103,6 +104,7 @@
                 app:layout_constraintStart_toEndOf="@id/addTagButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/always_white"
                 android:text="@string/clear"/>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -133,6 +135,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/clearLocationButton"
                 app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
+                android:textColor="@color/always_white"
                 android:text="@string/add_location_to_sort"/>
 
             <Button
@@ -143,6 +146,7 @@
                 app:layout_constraintStart_toEndOf="@id/addLocationButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/locationFilterSwitch"
+                android:textColor="@color/always_white"
                 android:text="@string/clear_location"/>
 
             <TextView
@@ -170,6 +174,7 @@
                 android:id="@+id/radius_button"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:textColor="@color/always_white"
                 android:text="10"
                 android:padding="0dp"
                 android:textSize="20sp"
@@ -252,6 +257,7 @@ android:background="@color/white">
         android:id="@+id/btnDarkTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/always_white"
         android:text="@string/dark" />
 
     <Button
@@ -259,6 +265,7 @@ android:background="@color/white">
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:textColor="@color/always_white"
         android:text="@string/light" />
 </LinearLayout>
 <Button
@@ -267,6 +274,7 @@ android:background="@color/white">
     android:layout_height="wrap_content"
     android:text="@string/set_default"
     android:layout_marginStart="16dp"
+    android:textColor="@color/always_white"
     android:layout_marginTop="10dp" />
 
 <TextView
@@ -286,6 +294,7 @@ android:background="@color/white">
         android:id="@+id/btnEnglish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/always_white"
         android:text="@string/en" />
 
     <Button
@@ -293,6 +302,7 @@ android:background="@color/white">
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:textColor="@color/always_white"
         android:text="@string/ru" />
 </LinearLayout>
 </LinearLayout>
