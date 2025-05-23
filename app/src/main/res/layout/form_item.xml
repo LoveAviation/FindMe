@@ -71,13 +71,12 @@
 
         <ImageView
             android:id="@+id/avatar"
-            android:layout_width="79dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp"
             android:contentDescription="@string/this_is_avatar_of_author_of_form"
-            android:scaleType="centerCrop"
-            android:src="@drawable/profile_button"
+            android:src="@drawable/profile_button_big"
             android:focusable="false"
             android:clickable="false" />
     </LinearLayout>
