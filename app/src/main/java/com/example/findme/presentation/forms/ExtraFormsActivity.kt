@@ -1,7 +1,9 @@
 package com.example.findme.presentation.forms
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +48,8 @@ class ExtraFormsActivity : AppCompatActivity() {
                     binding.loading.visibility = View.GONE
                     if (forms.isNotEmpty()){
                         binding.extraRV.adapter = FormsAdapter(this, forms) { selectedItem ->
+                            var name = intent.getStringExtra(NAME)
+                            var surname = intent.getStringExtra(SURNAME)
                             val intent = Intent(this, EditForm::class.java)
                             intent.putExtra(FormActivity.KEY_ID, selectedItem.id)
                             intent.putExtra(FormActivity.KEY_TITLE, selectedItem.title)
@@ -55,8 +59,8 @@ class ExtraFormsActivity : AppCompatActivity() {
                             intent.putExtra(FormActivity.KEY_AVATAR, selectedItem.authorAvatar)
                             intent.putExtra(FormActivity.KEY_LOCATION, selectedItem.location)
                             intent.putExtra(FormActivity.KEY_LOGIN, selectedItem.authorLogin)
-                            intent.putExtra(MainActivity.KEY_NAME, intent.getStringExtra(NAME))
-                            intent.putExtra(MainActivity.KEY_SURNAME, intent.getStringExtra(SURNAME))
+                            intent.putExtra(MainActivity.KEY_NAME, name)
+                            intent.putExtra(MainActivity.KEY_SURNAME, surname)
                             startActivity(intent)
                         }
                         binding.emptyText.visibility = View.GONE

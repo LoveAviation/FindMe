@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.forms.CreateFormActivity">
@@ -53,13 +54,33 @@
             android:text="Author"
             android:textColor="@color/black" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/name_switch"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/use_name_and_surname"
-            android:textColor="@color/gray"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/name_checkbox_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/use_name_and_surname"
+                android:textColor="@color/gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="3dp"/>
+
+            <CheckBox
+                android:id="@+id/name_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/name_checkbox_text"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/title_textInpLayout"

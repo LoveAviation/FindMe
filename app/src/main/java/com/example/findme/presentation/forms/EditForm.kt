@@ -93,7 +93,7 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
         val login = intent.getStringExtra(FormActivity.KEY_LOGIN)
 
         if(author != login) {
-            binding.nameSwitch.isChecked = true
+            binding.nameCheckbox.isChecked = true
         }
 
         binding.author.text = author
@@ -110,7 +110,7 @@ class EditForm : AppCompatActivity(), TagsAdapter.OnButtonClickListener {
 
         val name = intent.getStringExtra(MainActivity.KEY_NAME)
         val surname = intent.getStringExtra(MainActivity.KEY_SURNAME)
-        binding.nameSwitch.setOnCheckedChangeListener{ _, isActivated ->
+        binding.nameCheckbox.setOnCheckedChangeListener{ _, isActivated ->
             if(isActivated){
                 binding.author.text = "$name $surname"
                 this.author = "$name $surname"

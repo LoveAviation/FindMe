@@ -179,7 +179,9 @@ class SearchFragment : Fragment(), TagsAdapter.OnButtonClickListener {
         }
 
         binding.selectedCoordinates.setOnClickListener {
-            openMaps(latitude!!.toDouble(), longitude!!.toDouble())
+            if(!latitude.isNullOrEmpty() && !longitude.isNullOrEmpty()) {
+                openMaps(latitude!!.toDouble(), longitude!!.toDouble())
+            }
         }
 
         binding.searchEditText.afterChangeWithDebounce {
